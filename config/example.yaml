@@ -1,0 +1,19 @@
+production:
+
+mysql:
+  DB_CONNECTION: MYSQL
+  DB_SERVER: localhost:23312
+  DB_DATABASE: botnana
+  DB_USERNAME:
+  DB_PASSWORD:
+  DB_ROOT_PASSWORD:
+
+keycloak:
+  user:
+  password:
+
+appUrl: http://localhost:8100
+apiUrl: http://localhost:8002
+apiPort: 8002
+OAuthUrl: https://botnana.localhost
+mqttBroker: tcp://localhost:1883

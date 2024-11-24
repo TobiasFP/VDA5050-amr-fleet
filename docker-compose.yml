@@ -1,0 +1,71 @@
+version: "3"
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    container_name: mosquitto
+    volumes:
+      - ./mqtt-broker/config:/mosquitto/config
+      - ./mqtt-broker/data:/mosquitto/data
+      - ./mqtt-broker/log:/mosquitto/log
+    ports:
+      - 1883:1883
+      - 9001:9001
+
+  mariadb:
+    image: mariadb
+    container_name: botnanaDB
+    volumes:
+      - ./_data/mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_DATABASE: $DB_DATABASE
+      MYSQL_USER: $DB_USERNAME
+      MYSQL_PASSWORD: $DB_PASSWORD
+    ports:
+      - 23312:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: lttr_phpmyadmin
+    links:
+      - mariadb
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8183:80
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: ["start-dev", "--http-port", "7080", "--https-port", "7443"]
+    environment:
+      DB_VENDOR: mariadb
+      DB_ADDR: mariadb
+      DB_DATABASE: keycloak
+      DB_USER: $DB_USERNAME
+      DB_PASSWORD: $DB_PASSWORD
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 7080
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: $kc_pw
+      KEYCLOAK_USER: $kc_user
+      KEYCLOAK_PASSWORD: $kc_pw
+      KC_LOG_LEVEL: info
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    ports:
+      - "7080:7080"
+      - "8443:8443"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7080/health/ready"]
+      interval: 15s
+      timeout: 2s
+      retries: 15
+volumes:
+  mysql_data:
+    driver: local
