@@ -13,6 +13,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ginglog "github.com/szuecs/gin-glog"
+	"github.com/tbaehler/gin-keycloak/pkg/ginkeycloak"
 	"golang.org/x/oauth2"
 )
 
@@ -20,7 +21,7 @@ var (
 	clientID        = "6f5944858fca4f20b1799a40647ff8c8"
 	clientIDDev     = "botnana"
 	clientSecret    = "3ab14fa856b24ff38b915a5ba2235a9b"
-	clientSecretDev = "kPRJCe39lsRn1YKMrh83E66XLIJk7XCV"
+	clientSecretDev = "2DAb8HZ13h2zhg206vjKZVDmjnDIZQrb"
 )
 
 // StartGin function
@@ -69,7 +70,12 @@ func StartGin() {
 	router.GET("/", authController.Login)
 	router.GET("/auth/callback", authController.Callback)
 
+	var keycloakconfig = ginkeycloak.KeycloakConfig{
+		Url:   conf.GetString("keycloakUrl"),
+		Realm: "botnana",
+	}
 	api := router.Group("/api")
+	api.Use(ginkeycloak.Auth(ginkeycloak.AuthCheck(), keycloakconfig))
 
 	strategiesGroup := api.Group("/helloworld")
 	strategiesGroup.GET("/", helloworld)

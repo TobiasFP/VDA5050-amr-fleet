@@ -14,8 +14,6 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var whitelistedAccountKeys = []string{"D0Fok1CkYG6uxd6Spgl84Q==", "sHCnjdPl9cU|2qwD1Xvzrw=="}
-
 // Auth is A simple struct to handle authentication configuration
 type Auth struct {
 	Config oauth2.Config
