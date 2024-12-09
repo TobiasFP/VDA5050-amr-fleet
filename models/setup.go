@@ -21,15 +21,14 @@ func ConnectDatabase() {
 		&ControlPoint{},
 		&ActionState{},
 		&BatteryState{},
+		&State{},
 		&StateError{},
 		&AgvPosition{},
-		&Map{},
+		&AmrMap{},
 		&SafetyState{},
-		&Velocity{},
 		&Info{},
 		&InfoReference{},
 		&Load{},
-		&State{},
 	)
 	if err != nil {
 		return

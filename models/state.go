@@ -1,6 +1,16 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"TobiasFP/BotNana/conn"
+	"encoding/json"
+	"errors"
+	"log"
+	"net/http"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
 
 type NodeState struct {
 	gorm.Model
@@ -57,14 +67,14 @@ type AgvPosition struct {
 	X                   float64 `json:"x"`
 	Y                   float64 `json:"y"`
 	Theta               float64 `json:"theta"`
-	MapID               string  `json:"mapId"`
+	MapID               string  `json:"mapId"` // We should, with gorm, relate this id to the actual map
 	PositionInitialized bool    `json:"positionInitialized"`
 	MapDescription      string  `json:"mapDescription"`
 	LocalizationScore   float64 `json:"localizationScore"`
 	DeviationRange      float64 `json:"deviationRange"`
 }
 
-type Map struct {
+type AmrMap struct {
 	gorm.Model
 	MapID          string `json:"mapId"`
 	MapVersion     string `json:"mapVersion"`
@@ -130,17 +140,68 @@ type State struct {
 	EdgeStates            []EdgeState   `gorm:"many2many:state_edge_state;" json:"edgeStates"`
 	Driving               bool          `json:"driving"`
 	ActionStates          []ActionState `gorm:"many2many:state_action_state;" json:"actionStates"`
-	BatteryState          BatteryState  `gorm:"column:battery_state_id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"batteryState"`
+	BatteryStateID        int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	BatteryState          BatteryState  `gorm:"foreignKey:BatteryStateID" json:"batteryState"`
 	OperatingMode         string        `json:"operatingMode"`
 	Errors                []StateError  `gorm:"many2many:state_errors;" json:"errors"`
-	SafetyState           SafetyState   `gorm:"column:safety_state_id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"safetyState"`
-	Maps                  []Map         `gorm:"many2many:state_maps;" json:"maps"`
+	SafetyStateID         int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	SafetyState           SafetyState   `gorm:"foreignKey:SafetyStateID" json:"safetyState"`
+	Maps                  []AmrMap      `gorm:"many2many:state_maps;" json:"maps"`
 	ZoneSetID             string        `json:"zoneSetId"`
 	Paused                bool          `json:"paused"`
 	NewBaseRequest        bool          `json:"newBaseRequest"`
 	DistanceSinceLastNode float64       `json:"distanceSinceLastNode"`
-	AgvPosition           AgvPosition   `gorm:"column:agv_position_id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"agvPosition"`
-	Velocity              Velocity      `gorm:"column:velocity_id;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"velocity"`
-	Loads                 []Load        `gorm:"many2many:state_loads; "json:"loads"`
+	AgvPositionID         int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	AgvPosition           AgvPosition   `gorm:"foreignKey:AgvPositionID" json:"agvPosition"`
+	Velocity              Velocity      `gorm:"-; " json:"velocity"` // We should not save such volatile data in our database. This should only be extracted from mqtt.
+	Loads                 []Load        `gorm:"many2many:state_loads; " json:"loads"`
 	Information           []Info        `gorm:"many2many:state_information;" json:"information"`
+}
+
+func AllStates(ctx *gin.Context) {
+	var states []State
+
+	DB.Find(&states)
+	ctx.JSON(http.StatusOK, gin.H{"data": states})
+}
+
+func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
+	db, err := conn.GetMysqlDB()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	msg := message.Payload()
+	topic := message.Topic()
+
+	var state State
+	err = json.Unmarshal([]byte(msg), &state)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	// To do: Add updated at vs timestamp check
+	// Check if map exists:
+	for _, amrMap := range state.Maps {
+		result := db.First(&AmrMap{}).Where("MapID = ?", amrMap.MapID)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				log.Printf("Received message: %s from topic: %s\n", msg, topic)
+				res := db.Create(&amrMap) // pass a slice to insert multiple row
+				if res.Error != nil {
+					log.Printf("Could not create map")
+					log.Print(result.Error.Error())
+				}
+			} else {
+				log.Printf("Could not query map in db")
+				log.Print(result.Error.Error())
+			}
+		}
+	}
+
+	if db.Model(&state).Where("serial_NUMBER = ?", state.SerialNumber).Updates(&state).RowsAffected == 0 {
+		db.Create(&state)
+
+	}
+
+	log.Printf("Received message: %s from topic: %s\n", msg, topic)
 }

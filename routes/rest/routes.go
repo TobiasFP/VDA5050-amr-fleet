@@ -77,8 +77,11 @@ func StartGin() {
 	api := router.Group("/api")
 	api.Use(ginkeycloak.Auth(ginkeycloak.AuthCheck(), keycloakconfig))
 
-	strategiesGroup := api.Group("/helloworld")
-	strategiesGroup.GET("/", helloworld)
+	amrOverviewGroup := api.Group("/amrs")
+	amrOverviewGroup.GET("/", models.AllStates)
+
+	helloWorldGroup := api.Group("/helloworld")
+	helloWorldGroup.GET("/", helloworld)
 
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusNotFound)
