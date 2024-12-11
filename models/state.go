@@ -1,14 +1,6 @@
 package models
 
 import (
-	"TobiasFP/BotNana/conn"
-	"encoding/json"
-	"errors"
-	"log"
-	"net/http"
-
-	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -72,14 +64,6 @@ type AgvPosition struct {
 	MapDescription      string  `json:"mapDescription"`
 	LocalizationScore   float64 `json:"localizationScore"`
 	DeviationRange      float64 `json:"deviationRange"`
-}
-
-type AmrMap struct {
-	gorm.Model
-	MapID          string `json:"mapId"`
-	MapVersion     string `json:"mapVersion"`
-	MapStatus      string `json:"mapStatus"`
-	MapDescription string `json:"mapDescription"`
 }
 
 type SafetyState struct {
@@ -158,50 +142,44 @@ type State struct {
 	Information           []Info        `gorm:"many2many:state_information;" json:"information"`
 }
 
-func AllStates(ctx *gin.Context) {
-	var states []State
+func CreateAmrStateInDb(db *gorm.DB, state State) error {
+	// Since we know that the amr is not in the db,
+	// we can create empty battery and map states
+	batteryCreateRes := db.Create(&state.BatteryState)
 
-	DB.Find(&states)
-	ctx.JSON(http.StatusOK, gin.H{"data": states})
+	if batteryCreateRes.Error != nil {
+		return batteryCreateRes.Error
+	}
+
+	safetyStateCreateRes := db.Create(&state.SafetyState)
+
+	if safetyStateCreateRes.Error != nil {
+		return safetyStateCreateRes.Error
+	}
+
+	res := db.Create(&state)
+	return res.Error
+
 }
 
-func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
-	db, err := conn.GetMysqlDB()
-	if err != nil {
-		log.Fatal(err.Error())
+func UpdateAmrStateInDb(db *gorm.DB, amrInDB State, amrFromMqtt State) error {
+	amrFromMqtt.AgvPosition.ID = uint(amrInDB.AgvPositionID)
+	AgvPositionRes := db.Save(&amrFromMqtt.AgvPosition)
+	if AgvPositionRes.Error != nil {
+		return AgvPositionRes.Error
 	}
-	msg := message.Payload()
-	topic := message.Topic()
-
-	var state State
-	err = json.Unmarshal([]byte(msg), &state)
-	if err != nil {
-		log.Fatal(err.Error())
+	amrFromMqtt.BatteryState.ID = uint(amrInDB.BatteryStateID)
+	BatteryStateRes := db.Save(&amrFromMqtt.BatteryState)
+	if BatteryStateRes.Error != nil {
+		return BatteryStateRes.Error
 	}
 
-	// To do: Add updated at vs timestamp check
-	// Check if map exists:
-	for _, amrMap := range state.Maps {
-		result := db.First(&AmrMap{}).Where("MapID = ?", amrMap.MapID)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				log.Printf("Received message: %s from topic: %s\n", msg, topic)
-				res := db.Create(&amrMap) // pass a slice to insert multiple row
-				if res.Error != nil {
-					log.Printf("Could not create map")
-					log.Print(result.Error.Error())
-				}
-			} else {
-				log.Printf("Could not query map in db")
-				log.Print(result.Error.Error())
-			}
-		}
+	amrFromMqtt.SafetyState.ID = uint(amrInDB.SafetyStateID)
+	SafetyStateRes := db.Save(&amrFromMqtt.SafetyState)
+	if SafetyStateRes.Error != nil {
+		return SafetyStateRes.Error
 	}
-
-	if db.Model(&state).Where("serial_NUMBER = ?", state.SerialNumber).Updates(&state).RowsAffected == 0 {
-		db.Create(&state)
-
-	}
-
-	log.Printf("Received message: %s from topic: %s\n", msg, topic)
+	amrFromMqtt.ID = amrInDB.ID
+	amrSaveRes := db.Save(&amrFromMqtt)
+	return amrSaveRes.Error
 }

@@ -2,7 +2,7 @@ package mqttroutes
 
 import (
 	"TobiasFP/BotNana/config"
-	"TobiasFP/BotNana/models"
+	mqttstate "TobiasFP/BotNana/controllers/mqtt"
 	"log"
 	"os"
 	"os/signal"
@@ -24,7 +24,7 @@ func StartMqtt() {
 	}
 
 	stateTopic := "state"
-	if token := client.Subscribe(stateTopic, 0, models.OnStateReceived); token.Wait() && token.Error() != nil {
+	if token := client.Subscribe(stateTopic, 0, mqttstate.OnStateReceived); token.Wait() && token.Error() != nil {
 		log.Panic("Error subscribing to topic:", token.Error())
 	}
 

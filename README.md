@@ -154,6 +154,12 @@ Well, currently i have no idea which way I'm going to go with this. I have some 
 I lean towards #1 or #2, as i like open source a lot and this means the project gets to be my hobby, and I can still make money by doing contract work. This means little to no chance of profiting but maybe, just maybe, my awesome code will show people how to do proper software and will serve as a foundation for some robotics platforms. 
 
 
+#### Decision
+I have decided on the following:
+Keep the base GoLang project completely open source with the least restricted model possible (MIT).
+
+The Frontend however will be kept open source, but very restricted, in that if you want to use the frontend for commercial purposes you have to contact me and make a deal. 
+
 ### Acquiring partners
 
 There are so many small robotics startups that simply don't have the time to write fleet software. By telling them to just support the vda5050 from the start and pay me to add fleet features must be a lot cheaper and easier than building everything from scratch. By contacting robotics firms and convincing them to let me do the hard part will surely be an easy way of getting partners.
@@ -163,3 +169,27 @@ There are so many small robotics startups that simply don't have the time to wri
 I am a big believer in the agile manifesto, and I absolutely loathe everything that steals the good agile name, so one thing i will ban and write into any contract is that using Jira is banned and doing any wannabe agile framework like SAFe that is waterfall in disguise will be doubly banned. If somebody wants to work on BotNana and they need specs and contracts i will definitely support it by doing waterfall, as waterfall is completely fine.
 
 While I am only myself working on it, the work will be done by simply doing what i want to do, to further the project. 
+
+
+
+## Low level design decisions
+
+### Maps
+
+The maps are, like ROS, represented by PGM/Pbm "Netpbm grayscale image format" images (https://netpbm.sourceforge.net/doc/pgm.html).
+
+This format is very easy to work with and therefore also quite versatile.
+
+We therefore also assume that the maps the robot will use is in pgm, or we will create a converter for this.
+
+The actual rendering of the maps and adding AMRs to the map will be purely handled in the frontend. 
+I have chosen to use the game engine "phaser" to assist me in especially the math portion of illustrating the map and AMR's.
+
+#### Resolution
+
+The resolution unit of a pgm map is set to 0.05m/pixel
+
+
+Read more about VDA5050 maps here (which are not related to the file format at all):
+
+https://github.com/VDA5050/VDA5050/blob/main/VDA5050_EN.md#67-maps

@@ -2,6 +2,7 @@ package restroutes
 
 import (
 	"TobiasFP/BotNana/controllers/auth"
+	"TobiasFP/BotNana/controllers/reststates"
 	"TobiasFP/BotNana/models"
 	"log"
 	"net/http"
@@ -77,8 +78,12 @@ func StartGin() {
 	api := router.Group("/api")
 	api.Use(ginkeycloak.Auth(ginkeycloak.AuthCheck(), keycloakconfig))
 
-	amrOverviewGroup := api.Group("/amrs")
-	amrOverviewGroup.GET("/", models.AllStates)
+	amrGroup := api.Group("/amrs")
+	amrGroup.GET("/", reststates.AllStates)
+
+	mapsGroup := api.Group("/maps")
+	mapsGroup.GET("/", reststates.AllMaps)
+	mapsGroup.GET("/map", reststates.Map)
 
 	helloWorldGroup := api.Group("/helloworld")
 	helloWorldGroup.GET("/", helloworld)
