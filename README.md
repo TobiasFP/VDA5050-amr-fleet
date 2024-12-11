@@ -158,7 +158,7 @@ I lean towards #1 or #2, as i like open source a lot and this means the project 
 I have decided on the following:
 Keep the base GoLang project completely open source with the least restricted model possible (MIT).
 
-The Frontend however will be kept open source, but very restricted, in that if you want to use the frontend for commercial purposes you have to contact me and make a deal. 
+The Frontend and vda5050 amr simulator however will be kept open to view, but very restricted, in that if you want to use these purposes you have to contact me and make a deal. 
 
 ### Acquiring partners
 
