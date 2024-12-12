@@ -20,14 +20,6 @@ type EdgeState struct {
 	EdgeDescription string `json:"edgeDescription"`
 }
 
-type ControlPoint struct {
-	gorm.Model
-	ControlPointID int
-	X              float64 `json:"x"`
-	Y              float64 `json:"y"`
-	Weight         float64 `json:"weight"`
-}
-
 type ActionState struct {
 	gorm.Model
 	ActionID          string `json:"actionId"`
@@ -125,20 +117,20 @@ type State struct {
 	Driving               bool          `json:"driving"`
 	ActionStates          []ActionState `gorm:"many2many:state_action_state;" json:"actionStates"`
 	BatteryStateID        int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
-	BatteryState          BatteryState  `gorm:"foreignKey:BatteryStateID" json:"batteryState"`
+	BatteryState          BatteryState  `gorm:"foreignKey:BatteryStateID;" json:"batteryState"`
 	OperatingMode         string        `json:"operatingMode"`
 	Errors                []StateError  `gorm:"many2many:state_errors;" json:"errors"`
 	SafetyStateID         int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
-	SafetyState           SafetyState   `gorm:"foreignKey:SafetyStateID" json:"safetyState"`
+	SafetyState           SafetyState   `gorm:"foreignKey:SafetyStateID;" json:"safetyState"`
 	Maps                  []AmrMap      `gorm:"many2many:state_maps;" json:"maps"`
 	ZoneSetID             string        `json:"zoneSetId"`
 	Paused                bool          `json:"paused"`
 	NewBaseRequest        bool          `json:"newBaseRequest"`
 	DistanceSinceLastNode float64       `json:"distanceSinceLastNode"`
 	AgvPositionID         int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
-	AgvPosition           AgvPosition   `gorm:"foreignKey:AgvPositionID" json:"agvPosition"`
+	AgvPosition           AgvPosition   `gorm:"foreignKey:AgvPositionID;" json:"agvPosition"`
 	Velocity              Velocity      `gorm:"-; " json:"velocity"` // We should not save such volatile data in our database. This should only be extracted from mqtt.
-	Loads                 []Load        `gorm:"many2many:state_loads; " json:"loads"`
+	Loads                 []Load        `gorm:"many2many:state_loads;" json:"loads"`
 	Information           []Info        `gorm:"many2many:state_information;" json:"information"`
 }
 

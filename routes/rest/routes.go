@@ -2,6 +2,7 @@ package restroutes
 
 import (
 	"TobiasFP/BotNana/controllers/auth"
+	"TobiasFP/BotNana/controllers/rest/edge"
 	"TobiasFP/BotNana/controllers/reststates"
 	"TobiasFP/BotNana/models"
 	"log"
@@ -80,10 +81,18 @@ func StartGin() {
 
 	amrGroup := api.Group("/amrs")
 	amrGroup.GET("/", reststates.AllStates)
+	amrGroup.GET("/positiondata", reststates.AllStatesOnlyPositionData)
+	amrGroup.GET("/info", reststates.State)
 
 	mapsGroup := api.Group("/maps")
 	mapsGroup.GET("/", reststates.AllMaps)
 	mapsGroup.GET("/map", reststates.Map)
+
+	edgeGroup := api.Group("/edges")
+	edgeGroup.POST("/post", edge.Create)
+
+	nodeGroup := api.Group("/nodes")
+	nodeGroup.POST("/post", node.Create)
 
 	helloWorldGroup := api.Group("/helloworld")
 	helloWorldGroup.GET("/", helloworld)

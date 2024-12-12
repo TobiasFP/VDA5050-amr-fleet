@@ -1,4 +1,4 @@
-package reststates
+package map
 
 import (
 	"TobiasFP/BotNana/models"
@@ -28,3 +28,4 @@ func Map(ctx *gin.Context) {
 	PgmBase64 := base64.StdEncoding.EncodeToString(Pgmcontent)
 	ctx.JSON(http.StatusOK, gin.H{"data": PgmBase64})
 }
+

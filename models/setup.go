@@ -18,7 +18,6 @@ func ConnectDatabase() {
 	err = db.AutoMigrate(
 		&NodeState{},
 		&EdgeState{},
-		&ControlPoint{},
 		&ActionState{},
 		&BatteryState{},
 		&State{},
@@ -31,7 +30,21 @@ func ConnectDatabase() {
 		&Load{},
 	)
 	if err != nil {
-		return
+		log.Fatal(err.Error())
+	}
+	err = db.AutoMigrate(
+		&ActionParameter{},
+		&Action{},
+		&Corridor{},
+		&NodePosition{},
+		&Trajectory{},
+		&Edge{},
+		&Order{},
+		&Node{},
+	)
+
+	if err != nil {
+		log.Fatal(err.Error())
 	}
 
 	DB = db
