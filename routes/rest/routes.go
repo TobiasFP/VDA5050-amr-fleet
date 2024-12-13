@@ -3,7 +3,9 @@ package restroutes
 import (
 	"TobiasFP/BotNana/controllers/auth"
 	"TobiasFP/BotNana/controllers/rest/edge"
-	"TobiasFP/BotNana/controllers/reststates"
+	"TobiasFP/BotNana/controllers/rest/node"
+	"TobiasFP/BotNana/controllers/rest/restmap"
+	"TobiasFP/BotNana/controllers/rest/reststate"
 	"TobiasFP/BotNana/models"
 	"log"
 	"net/http"
@@ -80,19 +82,21 @@ func StartGin() {
 	api.Use(ginkeycloak.Auth(ginkeycloak.AuthCheck(), keycloakconfig))
 
 	amrGroup := api.Group("/amrs")
-	amrGroup.GET("/", reststates.AllStates)
-	amrGroup.GET("/positiondata", reststates.AllStatesOnlyPositionData)
-	amrGroup.GET("/info", reststates.State)
+	amrGroup.GET("/all", reststate.AllStates)
+	amrGroup.GET("/positiondata", reststate.AllStatesOnlyPositionData)
+	amrGroup.GET("/info", reststate.State)
 
 	mapsGroup := api.Group("/maps")
-	mapsGroup.GET("/", reststates.AllMaps)
-	mapsGroup.GET("/map", reststates.Map)
+	mapsGroup.GET("/all", restmap.AllMaps)
+	mapsGroup.GET("/map", restmap.Map)
 
 	edgeGroup := api.Group("/edges")
-	edgeGroup.POST("/post", edge.Create)
+	edgeGroup.GET("/all", edge.All)
+	edgeGroup.POST("/", edge.Create)
 
 	nodeGroup := api.Group("/nodes")
-	nodeGroup.POST("/post", node.Create)
+	nodeGroup.GET("/all", node.All)
+	nodeGroup.POST("/", node.Create)
 
 	helloWorldGroup := api.Group("/helloworld")
 	helloWorldGroup.GET("/", helloworld)

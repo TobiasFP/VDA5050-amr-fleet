@@ -5,12 +5,13 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func Create(ctx *gin.Context) {
 	var node models.Node
 	ctx.BindJSON(&node)
-
+	node.NodeID = uuid.New().String()
 	models.DB.Create(&node)
 	ctx.JSON(http.StatusOK, node)
 }

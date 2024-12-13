@@ -116,18 +116,18 @@ type State struct {
 	EdgeStates            []EdgeState   `gorm:"many2many:state_edge_state;" json:"edgeStates"`
 	Driving               bool          `json:"driving"`
 	ActionStates          []ActionState `gorm:"many2many:state_action_state;" json:"actionStates"`
-	BatteryStateID        int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	BatteryStateID        int           `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	BatteryState          BatteryState  `gorm:"foreignKey:BatteryStateID;" json:"batteryState"`
 	OperatingMode         string        `json:"operatingMode"`
 	Errors                []StateError  `gorm:"many2many:state_errors;" json:"errors"`
-	SafetyStateID         int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	SafetyStateID         int           `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	SafetyState           SafetyState   `gorm:"foreignKey:SafetyStateID;" json:"safetyState"`
 	Maps                  []AmrMap      `gorm:"many2many:state_maps;" json:"maps"`
 	ZoneSetID             string        `json:"zoneSetId"`
 	Paused                bool          `json:"paused"`
 	NewBaseRequest        bool          `json:"newBaseRequest"`
 	DistanceSinceLastNode float64       `json:"distanceSinceLastNode"`
-	AgvPositionID         int           `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	AgvPositionID         int           `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	AgvPosition           AgvPosition   `gorm:"foreignKey:AgvPositionID;" json:"agvPosition"`
 	Velocity              Velocity      `gorm:"-; " json:"velocity"` // We should not save such volatile data in our database. This should only be extracted from mqtt.
 	Loads                 []Load        `gorm:"many2many:state_loads;" json:"loads"`

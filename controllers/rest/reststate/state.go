@@ -1,4 +1,4 @@
-package reststates
+package reststate
 
 import (
 	"TobiasFP/BotNana/models"

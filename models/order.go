@@ -10,7 +10,7 @@ type Node struct {
 	Released        bool         `json:"released"`
 	Actions         []Action     `gorm:"many2many:node_actions;"; json:"actions"`
 	NodeDescription string       `json:"nodeDescription"`
-	NodePositionID  int          `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	NodePositionID  int          `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	NodePosition    NodePosition `gorm:"foreignKey:NodePositionID;" json:"nodePosition"`
 }
 
@@ -62,9 +62,9 @@ type Edge struct {
 	RotationAllowed  bool       `json:"rotationAllowed"`
 	MaxRotationSpeed float64    `json:"maxRotationSpeed"`
 	Length           float64    `json:"length"`
-	TrajectoryID     int        `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	TrajectoryID     int        `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	Trajectory       Trajectory `gorm:"foreignKey:TrajectoryID;" json:"trajectory"`
-	CorridorID       int        `json:",omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	CorridorID       int        `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	Corridor         Corridor   `gorm:"foreignKey:CorridorID;" json:"corridor"`
 }
 
