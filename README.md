@@ -20,7 +20,7 @@ with your organisation.
 ## Purpose
 
 The purpose of BotNana is four fold:
-* To create an engine/platform which Robot developers can build upon (Like ROS for fleet management but without all the bad decisions)
+* To create an engine/platform which Robot developers can build upon (Like ROS for fleet management but without all the bad decisions - oh well, I will probably make a few.)
 * To make a complete, extendable, fleet management system that is ready for the VDA5050 revolution
 * To show off my awesome GoLang skills
 * To land me a consulting job at any interesting robotics firm 
