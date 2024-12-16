@@ -1,4 +1,5 @@
-# BotNana
+# BotNana - A VDA5050 compliant amr fleet
+Public
 ##### Currently, this is a work in progress, and basically just a bunch of my thoughts.
 
 A VDA 5050 compliant fleet software engine
