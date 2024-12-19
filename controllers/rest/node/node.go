@@ -18,6 +18,6 @@ func Create(ctx *gin.Context) {
 
 func All(ctx *gin.Context) {
 	var nodes []models.Node
-	models.DB.Find(&nodes)
+	models.DB.Preload("NodePosition").Find(&nodes)
 	ctx.JSON(http.StatusOK, gin.H{"data": nodes})
 }
