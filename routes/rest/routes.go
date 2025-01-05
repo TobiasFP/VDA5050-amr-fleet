@@ -4,6 +4,7 @@ import (
 	"TobiasFP/BotNana/controllers/auth"
 	"TobiasFP/BotNana/controllers/rest/edge"
 	"TobiasFP/BotNana/controllers/rest/node"
+	"TobiasFP/BotNana/controllers/rest/order"
 	"TobiasFP/BotNana/controllers/rest/restmap"
 	"TobiasFP/BotNana/controllers/rest/reststate"
 	"TobiasFP/BotNana/models"
@@ -97,6 +98,10 @@ func StartGin() {
 	nodeGroup := api.Group("/nodes")
 	nodeGroup.GET("/all", node.All)
 	nodeGroup.POST("/", node.Create)
+
+	orderGroup := api.Group("/orders")
+	orderGroup.GET("/all", order.All)
+	orderGroup.POST("/", order.Create)
 
 	helloWorldGroup := api.Group("/helloworld")
 	helloWorldGroup.GET("/", helloworld)

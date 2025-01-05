@@ -9,15 +9,15 @@ import (
 )
 
 func Create(ctx *gin.Context) {
-	var node models.Node
+	var node models.NodeMeta
 	ctx.BindJSON(&node)
-	node.NodeID = uuid.New().String()
+	node.Node.NodeID = uuid.New().String()
 	models.DB.Create(&node)
 	ctx.JSON(http.StatusOK, node)
 }
 
 func All(ctx *gin.Context) {
-	var nodes []models.Node
-	models.DB.Preload("NodePosition").Find(&nodes)
+	var nodes []models.NodeMeta
+	models.DB.Preload("Node").Preload("Node.NodePosition").Find(&nodes)
 	ctx.JSON(http.StatusOK, gin.H{"data": nodes})
 }

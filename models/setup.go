@@ -41,6 +41,7 @@ func ConnectDatabase() {
 		&Edge{},
 		&Order{},
 		&Node{},
+		&NodeMeta{},
 	)
 
 	if err != nil {

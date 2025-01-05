@@ -1,19 +1,19 @@
-production:
+production: false
 
 mysql:
   DB_CONNECTION: MYSQL
   DB_SERVER: localhost:23312
   DB_DATABASE: botnana
-  DB_USERNAME:
-  DB_PASSWORD:
-  DB_ROOT_PASSWORD:
+  DB_USERNAME: botnana
+  DB_PASSWORD: dfjgnsdfogfnsdjkgbns
+  DB_ROOT_PASSWORD: rghjinasdgjonsdghipba
 
 keycloak:
-  user:
-  password:
-
+  user: tobias
+  password: dosjgnsdjkogns
+keycloakUrl: http://localhost:7080
 appUrl: http://localhost:8100
 apiUrl: http://localhost:8002
 apiPort: 8002
-OAuthUrl: https://botnana.localhost
+OAuthUrl: "http://localhost:7080/realms/botnana/protocol/openid-connect"
 mqttBroker: tcp://localhost:1883

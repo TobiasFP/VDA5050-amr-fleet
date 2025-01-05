@@ -2,6 +2,13 @@ package models
 
 import "gorm.io/gorm"
 
+type NodeMeta struct {
+	gorm.Model
+	NodeRef int    `json:"-,omitempty"`
+	Node    Node   `gorm:"foreignKey:NodeRef;" json:"node"`
+	Icon    string `json:"icon"`
+}
+
 type Node struct {
 	gorm.Model
 
