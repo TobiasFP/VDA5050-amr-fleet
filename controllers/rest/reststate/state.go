@@ -8,6 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @BasePath /api/v1
+
+// @Summary Get all position data related to the states
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success 200 {string} data
+// @Router /amrs/positiondata [get]
 func AllStatesOnlyPositionData(ctx *gin.Context) {
 	var states []models.State
 	res := models.DB.Preload("Maps").Preload("AgvPosition").Select("serial_number").Find(&states)
@@ -16,6 +24,13 @@ func AllStatesOnlyPositionData(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"data": states})
 }
+
+// @Summary Get all states
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success 200 {slice} []models.State data "ok"
+// @Router /amrs/all [get]
 func AllStates(ctx *gin.Context) {
 	var states []models.State
 	res := models.DB.Preload("BatteryState").Preload("Maps").Preload("SafetyState").Preload("AgvPosition").Find(&states)
@@ -25,6 +40,13 @@ func AllStates(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"data": states})
 }
 
+// @Summary Get a single state
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param   serial_number     path    string     true        "AMR Serial number"
+// @Success 200 {string} data "ok"
+// @Router /amrs/info [get]
 func State(ctx *gin.Context) {
 	SN := ctx.Query("SN")
 	if SN == "" {

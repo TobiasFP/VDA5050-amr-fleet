@@ -1,0 +1,106 @@
+info:
+  contact: {}
+paths:
+  /amrs/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: slice
+      summary: Get all states
+  /amrs/info:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: AMR Serial number
+        in: path
+        name: serial_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Get a single state
+  /amrs/positiondata:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get all position data related to the states
+  /edge/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: slice
+      summary: Get all edges
+  /maps/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: slice
+      summary: Get all maps
+  /maps/map:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get the pgm map as b64
+  /nodes/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: slice
+      summary: Get all nodes
+  /orders/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: slice
+      summary: Get all orders
+swagger: "2.0"

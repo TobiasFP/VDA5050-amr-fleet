@@ -8,14 +8,15 @@ import (
 	"github.com/google/uuid"
 )
 
-type OrderDetails struct {
-	Order   models.Order `json:"order"`
-	NodeIds []string     `json:"nodeIds"`
-}
+// @BasePath /api/v1
 
 func Create(ctx *gin.Context) {
-	var orderDetails OrderDetails
-	ctx.BindJSON(&orderDetails)
+	var orderDetails models.OrderTemplateDetails
+	// err = json.Unmarshal(jsonData, &orderDetails)
+	err := ctx.ShouldBindJSON(&orderDetails)
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": err.Error()})
+	}
 	orderDetails.Order.OrderID = uuid.New().String()
 
 	var nodes []models.Node
@@ -28,12 +29,18 @@ func Create(ctx *gin.Context) {
 		}
 	}
 	orderDetails.Order.Nodes = nodes
-	models.DB.Create(&orderDetails.Order)
+	models.DB.Create(&orderDetails)
 	ctx.JSON(http.StatusOK, orderDetails)
 }
 
+// @Summary Get all orders
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success 200 {slice} []models.Order data "ok"
+// @Router /orders/all [get]
 func All(ctx *gin.Context) {
-	var nodes []models.Order
-	models.DB.Find(&nodes)
+	var nodes []models.OrderTemplateDetails
+	models.DB.Preload("Order").Find(&nodes)
 	ctx.JSON(http.StatusOK, gin.H{"data": nodes})
 }

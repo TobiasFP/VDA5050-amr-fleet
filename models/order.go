@@ -15,7 +15,7 @@ type Node struct {
 	NodeID          string       `json:"nodeId"`
 	SequenceID      int          `json:"sequenceId"`
 	Released        bool         `json:"released"`
-	Actions         []Action     `gorm:"many2many:node_actions;"; json:"actions"`
+	Actions         []Action     `gorm:"many2many:node_actions;" json:"actions"`
 	NodeDescription string       `json:"nodeDescription"`
 	NodePositionID  int          `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
 	NodePosition    NodePosition `gorm:"foreignKey:NodePositionID;" json:"nodePosition"`
@@ -97,6 +97,38 @@ type Corridor struct {
 	CorridorRefPoint string  `json:"corridorRefPoint"`
 }
 
+// Not VDA 5050, but needed for storing before sending to a robot.
+type OrderTemplateDetails struct {
+	gorm.Model
+	Name            string        `json:"name"`
+	OrderTemplateId int           `json:"-,omitempty"`
+	Order           OrderTemplate `gorm:"foreignKey:OrderTemplateId;" json:"order"`
+	NodeIds         []string      `gorm:"-" json:"nodeIds"` //This is only for processing when receving from rest
+}
+
+// Having the order template be the exact same struct as the Order
+// is for us to be able to have two actual database tables with Gorm.
+// This means that we can create a template and use that for when creating
+// an actual order. It is important to keep this struct the same as the Order
+// struct, as we can simply clone the template into the non-template,
+// when we want to send an order.
+type OrderTemplate struct {
+	gorm.Model
+	HeaderID      int    `json:"headerId"`
+	Timestamp     string `json:"timestamp"`
+	Version       string `json:"version"`
+	Manufacturer  string `json:"manufacturer"`
+	SerialNumber  string `json:"serialNumber"`
+	OrderID       string `json:"orderId"`
+	OrderUpdateID int    `json:"orderUpdateId"`
+	Nodes         []Node `gorm:"many2many:order_template_nodes;" json:"nodes"`
+	Edges         []Edge `gorm:"many2many:order_template_edges;" json:"edges"`
+	ZoneSetID     string `json:"zoneSetId"`
+}
+
+// Since we have the order template for building the actual templating for the orders
+// this means that whenever we save an actual order, we will save the order in its
+// entirity, filled out with nodes, edges and their actions.
 type Order struct {
 	gorm.Model
 	HeaderID      int    `json:"headerId"`

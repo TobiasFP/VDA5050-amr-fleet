@@ -1,19 +1,24 @@
 package restroutes
 
 import (
+	"TobiasFP/BotNana/config"
 	"TobiasFP/BotNana/controllers/auth"
 	"TobiasFP/BotNana/controllers/rest/edge"
 	"TobiasFP/BotNana/controllers/rest/node"
 	"TobiasFP/BotNana/controllers/rest/order"
 	"TobiasFP/BotNana/controllers/rest/restmap"
 	"TobiasFP/BotNana/controllers/rest/reststate"
-	"TobiasFP/BotNana/models"
+	"TobiasFP/BotNana/models" // swagger embed files
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"TobiasFP/BotNana/config"
+	docs "TobiasFP/BotNana/docs"
+
+	swaggerfiles "github.com/swaggo/files"
+
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -23,10 +28,10 @@ import (
 )
 
 var (
-	clientID        = "6f5944858fca4f20b1799a40647ff8c8"
+	clientID        = ""
 	clientIDDev     = "botnana"
-	clientSecret    = "3ab14fa856b24ff38b915a5ba2235a9b"
-	clientSecretDev = "2DAb8HZ13h2zhg206vjKZVDmjnDIZQrb"
+	clientSecret    = ""
+	clientSecretDev = "HmLxxeKkfiDZXvBTocvUW13nBUXOgO4c"
 )
 
 // StartGin function
@@ -41,6 +46,7 @@ func StartGin() {
 	}
 
 	router := gin.Default()
+	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS", "DELETE"},
@@ -80,35 +86,38 @@ func StartGin() {
 		Realm: "botnana",
 	}
 	api := router.Group("/api")
-	api.Use(ginkeycloak.Auth(ginkeycloak.AuthCheck(), keycloakconfig))
+	v1 := api.Group("/v1")
+	v1.Use(ginkeycloak.Auth(ginkeycloak.AuthCheck(), keycloakconfig))
 
-	amrGroup := api.Group("/amrs")
+	amrGroup := v1.Group("/amrs")
 	amrGroup.GET("/all", reststate.AllStates)
 	amrGroup.GET("/positiondata", reststate.AllStatesOnlyPositionData)
 	amrGroup.GET("/info", reststate.State)
 
-	mapsGroup := api.Group("/maps")
+	mapsGroup := v1.Group("/maps")
 	mapsGroup.GET("/all", restmap.AllMaps)
 	mapsGroup.GET("/map", restmap.Map)
 
-	edgeGroup := api.Group("/edges")
+	edgeGroup := v1.Group("/edges")
 	edgeGroup.GET("/all", edge.All)
 	edgeGroup.POST("/", edge.Create)
 
-	nodeGroup := api.Group("/nodes")
+	nodeGroup := v1.Group("/nodes")
 	nodeGroup.GET("/all", node.All)
 	nodeGroup.POST("/", node.Create)
 
-	orderGroup := api.Group("/orders")
+	orderGroup := v1.Group("/orders")
 	orderGroup.GET("/all", order.All)
 	orderGroup.POST("/", order.Create)
 
-	helloWorldGroup := api.Group("/helloworld")
+	helloWorldGroup := v1.Group("/helloworld")
 	helloWorldGroup.GET("/", helloworld)
 
 	router.NoRoute(func(ctx *gin.Context) {
 		ctx.AbortWithStatus(http.StatusNotFound)
 	})
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	port := os.Getenv("PORT")
 	if port == "" {

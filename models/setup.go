@@ -39,11 +39,17 @@ func ConnectDatabase() {
 		&NodePosition{},
 		&Trajectory{},
 		&Edge{},
-		&Order{},
 		&Node{},
 		&NodeMeta{},
+		&Order{},
+		&OrderTemplate{},
 	)
-
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	err = db.AutoMigrate(
+		&OrderTemplateDetails{},
+	)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

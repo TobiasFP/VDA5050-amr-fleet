@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// @BasePath /api/v1
+
 func Create(ctx *gin.Context) {
 	var node models.NodeMeta
 	ctx.BindJSON(&node)
@@ -16,6 +18,12 @@ func Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, node)
 }
 
+// @Summary Get all nodes
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success 200 {slice} []models.NodeMeta data "ok"
+// @Router /nodes/all [get]
 func All(ctx *gin.Context) {
 	var nodes []models.NodeMeta
 	models.DB.Preload("Node").Preload("Node.NodePosition").Find(&nodes)

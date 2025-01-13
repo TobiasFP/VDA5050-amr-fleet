@@ -123,7 +123,7 @@ Now, open the following page in a webbrowser:
 http://localhost:7080
 
 Login with yuor admin credentials, create a new realm named botnana (refer to the keykloak documentation), and setup a new client under this realm just like it has been setup in the following image, that can be found here, in this repo:
-info/realm-client-settings.png
+info/realm-settings.png
 
 Under the client, go to credentials, and use the client secret in the file "routes/rest/routes.go" and put in the var: "clientSecretDev".
 Client Secret Dev should already be set to botnana, but if you want to have another name for this, just set it there.
