@@ -1,5 +1,12 @@
 # BotNana - A VDA5050 compliant amr fleet
-Public
+
+
+#### For the UI, see: [BananaUI](https://github.com/TobiasFP/BananaUI).
+
+
+#### For the Simulator, see: [Amr Sim](https://github.com/TobiasFP/amr-sim-vda5050).
+
+
 ##### Currently, this is a work in progress, and basically just a bunch of my thoughts.
 
 A VDA 5050 compliant fleet software engine
