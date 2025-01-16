@@ -1,6 +1,7 @@
 package mqttstate
 
 import (
+	"TobiasFP/BotNana/config"
 	"TobiasFP/BotNana/models"
 	"encoding/json"
 	"errors"
@@ -9,6 +10,22 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"gorm.io/gorm"
 )
+
+var Client mqtt.Client
+
+func StartMqtt() {
+	conf := config.GetConfig()
+	broker := conf.GetString("mqttBroker")
+
+	opts := mqtt.NewClientOptions()
+	opts.AddBroker(broker)
+
+	client := mqtt.NewClient(opts)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		log.Panic("Error connecting to MQTT broker:", token.Error())
+	}
+	Client = client
+}
 
 func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 	msg := message.Payload()
@@ -45,4 +62,14 @@ func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 		log.Print("Error creating the mqtt amr in db")
 		log.Print(unmarshallErr.Error())
 	}
+}
+
+func AssignOrder(client mqtt.Client, order models.Order) {
+	message, err := json.Marshal(order)
+	if err != nil {
+		log.Fatal(err)
+	}
+	token := client.Publish("state", 0, false, message)
+	token.Wait()
+
 }

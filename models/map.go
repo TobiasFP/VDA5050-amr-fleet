@@ -1,9 +1,7 @@
 package models
 
-import "gorm.io/gorm"
-
 type AmrMap struct {
-	gorm.Model
+	GormModelHiddenJson
 	MapID          string `gorm:"primarykey;unique;not null" json:"mapId"`
 	MapVersion     string `json:"mapVersion"`
 	MapStatus      string `json:"mapStatus"`

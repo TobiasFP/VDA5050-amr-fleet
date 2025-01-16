@@ -1,28 +1,26 @@
 package models
 
-import "gorm.io/gorm"
-
 type NodeMeta struct {
-	gorm.Model
-	NodeRef int    `json:"-,omitempty"`
+	GormModelHiddenJson
+	NodeRef int    `json:"-"`
 	Node    Node   `gorm:"foreignKey:NodeRef;" json:"node"`
 	Icon    string `json:"icon"`
 }
 
 type Node struct {
-	gorm.Model
+	GormModelHiddenJson
 
 	NodeID          string       `json:"nodeId"`
 	SequenceID      int          `json:"sequenceId"`
 	Released        bool         `json:"released"`
 	Actions         []Action     `gorm:"many2many:node_actions;" json:"actions"`
 	NodeDescription string       `json:"nodeDescription"`
-	NodePositionID  int          `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	NodePositionID  int          `json:"-"` // Not  in the vda55 struct, simply a field for GORM
 	NodePosition    NodePosition `gorm:"foreignKey:NodePositionID;" json:"nodePosition"`
 }
 
 type Action struct {
-	gorm.Model
+	GormModelHiddenJson
 
 	ActionID          string            `json:"actionId"`
 	ActionType        string            `json:"actionType"`
@@ -32,14 +30,14 @@ type Action struct {
 }
 
 type ActionParameter struct {
-	gorm.Model
+	GormModelHiddenJson
 
 	Key   string  `json:"key"`
 	Value float64 `json:"value"`
 }
 
 type NodePosition struct {
-	gorm.Model
+	GormModelHiddenJson
 
 	X                     float64 `json:"x"`
 	Y                     float64 `json:"y"`
@@ -51,7 +49,7 @@ type NodePosition struct {
 }
 
 type Edge struct {
-	gorm.Model
+	GormModelHiddenJson
 
 	EdgeID           string     `json:"edgeId"`
 	SequenceID       int        `json:"sequenceId"`
@@ -69,21 +67,21 @@ type Edge struct {
 	RotationAllowed  bool       `json:"rotationAllowed"`
 	MaxRotationSpeed float64    `json:"maxRotationSpeed"`
 	Length           float64    `json:"length"`
-	TrajectoryID     int        `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	TrajectoryID     int        `json:"-"` // Not  in the vda55 struct, simply a field for GORM
 	Trajectory       Trajectory `gorm:"foreignKey:TrajectoryID;" json:"trajectory"`
-	CorridorID       int        `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	CorridorID       int        `json:"-"` // Not  in the vda55 struct, simply a field for GORM
 	Corridor         Corridor   `gorm:"foreignKey:CorridorID;" json:"corridor"`
 }
 
 type Trajectory struct {
-	gorm.Model
+	GormModelHiddenJson
 	Degree int `json:"degree"`
 	// KnotVector    []float64      `json:"knotVector"`
 	ControlPoints []ControlPoint `gorm:"many2many:trajectory_controlpoints;" json:"controlPoints"`
 }
 
 type ControlPoint struct {
-	gorm.Model
+	GormModelHiddenJson
 	ControlPointID int
 	X              float64 `json:"x"`
 	Y              float64 `json:"y"`
@@ -91,17 +89,21 @@ type ControlPoint struct {
 }
 
 type Corridor struct {
-	gorm.Model
+	GormModelHiddenJson
 	LeftWidth        float64 `json:"leftWidth"`
 	RightWidth       float64 `json:"rightWidth"`
 	CorridorRefPoint string  `json:"corridorRefPoint"`
 }
 
+type AssignOrder struct {
+	ID int `json:"id"`
+}
+
 // Not VDA 5050, but needed for storing before sending to a robot.
 type OrderTemplateDetails struct {
-	gorm.Model
+	GormModelHiddenJson
 	Name            string        `json:"name"`
-	OrderTemplateId int           `json:"-,omitempty"`
+	OrderTemplateId int           `json:"-"`
 	Order           OrderTemplate `gorm:"foreignKey:OrderTemplateId;" json:"order"`
 	NodeIds         []string      `gorm:"-" json:"nodeIds"` //This is only for processing when receving from rest
 }
@@ -113,7 +115,7 @@ type OrderTemplateDetails struct {
 // struct, as we can simply clone the template into the non-template,
 // when we want to send an order.
 type OrderTemplate struct {
-	gorm.Model
+	GormModelHiddenJson
 	HeaderID      int    `json:"headerId"`
 	Timestamp     string `json:"timestamp"`
 	Version       string `json:"version"`
@@ -130,7 +132,7 @@ type OrderTemplate struct {
 // this means that whenever we save an actual order, we will save the order in its
 // entirity, filled out with nodes, edges and their actions.
 type Order struct {
-	gorm.Model
+	GormModelHiddenJson
 	HeaderID      int    `json:"headerId"`
 	Timestamp     string `json:"timestamp"`
 	Version       string `json:"version"`

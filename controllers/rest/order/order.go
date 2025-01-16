@@ -1,8 +1,10 @@
 package order
 
 import (
+	mqttstate "TobiasFP/BotNana/controllers/mqtt"
 	"TobiasFP/BotNana/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -23,7 +25,7 @@ func Create(ctx *gin.Context) {
 	var node models.Node
 	for _, id := range orderDetails.NodeIds {
 
-		result := models.DB.Where("nodeId = ?", id).First(&node)
+		result := models.DB.Where("node_id = ?", id).First(&node)
 		if result.RowsAffected == 1 && result.Error == nil {
 			nodes = append(nodes, node)
 		}
@@ -40,7 +42,49 @@ func Create(ctx *gin.Context) {
 // @Success 200 {slice} []models.Order data "ok"
 // @Router /orders/all [get]
 func All(ctx *gin.Context) {
-	var nodes []models.OrderTemplateDetails
-	models.DB.Preload("Order").Find(&nodes)
-	ctx.JSON(http.StatusOK, gin.H{"data": nodes})
+	var orderTemplate []models.OrderTemplateDetails
+	models.DB.Preload("Order").Find(&orderTemplate)
+	ctx.JSON(http.StatusOK, gin.H{"data": orderTemplate})
+}
+
+func AssignAnonymous(ctx *gin.Context) {
+	var assignOrder models.AssignOrder
+	err := ctx.ShouldBindJSON(&assignOrder)
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": err.Error()})
+	}
+
+	var orderDetails models.OrderTemplateDetails
+
+	orderDetailResults := models.DB.Model(&models.OrderTemplateDetails{}).Preload("Order").Preload("Order.Nodes").Preload("Order.Edges").Where("ID = ?", assignOrder.ID).First(&orderDetails)
+	if orderDetailResults.RowsAffected == 0 {
+		ctx.JSON(400, gin.H{"error": "No Order Template with the given ID found."})
+	}
+
+	if orderDetailResults.Error != nil {
+		ctx.JSON(400, gin.H{"error": orderDetailResults.Error.Error()})
+	}
+
+	// We sadly need to create a new order, as we cannot simply do:
+	// order := orderDetails.Order as this would copy info related to gorm as well.
+	order := models.Order{
+		HeaderID:      0,
+		Version:       "2.1.0",
+		Timestamp:     time.Now().Format(time.RFC3339),
+		Manufacturer:  orderDetails.Order.Manufacturer,
+		SerialNumber:  "",
+		OrderID:       uuid.New().String(),
+		OrderUpdateID: 0,
+		Nodes:         orderDetails.Order.Nodes,
+		Edges:         orderDetails.Order.Edges,
+		ZoneSetID:     "",
+	}
+
+	orderCreateRes := models.DB.Create(&order)
+
+	if orderCreateRes.Error != nil {
+		ctx.JSON(400, gin.H{"error": orderCreateRes.Error.Error()})
+	}
+	mqttstate.AssignOrder(mqttstate.Client, order)
+	ctx.JSON(http.StatusOK, assignOrder)
 }

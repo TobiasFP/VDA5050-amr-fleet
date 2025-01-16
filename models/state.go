@@ -5,15 +5,15 @@ import (
 )
 
 type NodeState struct {
-	gorm.Model
-	NodeID          string "json:\"nodeId\""
-	SequenceID      int    "json:\"sequenceId\""
-	Released        bool   "json:\"released\""
-	NodeDescription string "json:\"nodeDescription\""
+	GormModelHiddenJson
+	NodeID          string `json:"nodeId"`
+	SequenceID      int    `json:"sequenceId"`
+	Released        bool   `json:"released"`
+	NodeDescription string `json:"nodeDescription"`
 }
 
 type EdgeState struct {
-	gorm.Model
+	GormModelHiddenJson
 	EdgeID          string `json:"edgeId"`
 	SequenceID      int    `json:"sequenceId"`
 	Released        bool   `json:"released"`
@@ -21,7 +21,7 @@ type EdgeState struct {
 }
 
 type ActionState struct {
-	gorm.Model
+	GormModelHiddenJson
 	ActionID          string `json:"actionId"`
 	ActionStatus      string `json:"actionStatus"`
 	ActionType        string `json:"actionType"`
@@ -30,7 +30,7 @@ type ActionState struct {
 }
 
 type BatteryState struct {
-	gorm.Model
+	GormModelHiddenJson
 	BatteryCharge  float64 `json:"batteryCharge"`
 	Charging       bool    `json:"charging"`
 	BatteryVoltage float64 `json:"batteryVoltage"`
@@ -39,7 +39,7 @@ type BatteryState struct {
 }
 
 type StateError struct {
-	gorm.Model
+	GormModelHiddenJson
 	ErrorType        string `json:"errorType"`
 	ErrorLevel       string `json:"errorLevel"`
 	ErrorDescription string `json:"errorDescription"`
@@ -47,7 +47,7 @@ type StateError struct {
 }
 
 type AgvPosition struct {
-	gorm.Model
+	GormModelHiddenJson
 	X                   float64 `json:"x"`
 	Y                   float64 `json:"y"`
 	Theta               float64 `json:"theta"`
@@ -59,20 +59,20 @@ type AgvPosition struct {
 }
 
 type SafetyState struct {
-	gorm.Model
+	GormModelHiddenJson
 	EStop          string `json:"eStop"`
 	FieldViolation bool   `json:"fieldViolation"`
 }
 
 type Velocity struct {
-	gorm.Model
+	GormModelHiddenJson
 	Vx    float64 `json:"vx"`
 	Vy    float64 `json:"vy"`
 	Omega float64 `json:"omega"`
 }
 
 type Info struct {
-	gorm.Model
+	GormModelHiddenJson
 	InfoType        string          `json:"infoType"`
 	InfoLevel       string          `json:"infoLevel"`
 	InfoReferences  []InfoReference `gorm:"many2many:info_info_references;" json:"infoReferences"`
@@ -80,13 +80,13 @@ type Info struct {
 }
 
 type InfoReference struct {
-	gorm.Model
+	GormModelHiddenJson
 	ReferenceKey   string `json:"referenceKey"`
 	ReferenceValue string `json:"referenceValue"`
 }
 
 type Load struct {
-	gorm.Model
+	GormModelHiddenJson
 	LoadID       string `json:"loadId"`
 	LoadType     string `json:"loadType"`
 	LoadPosition string `json:"loadPosition"`
@@ -95,14 +95,14 @@ type Load struct {
 }
 
 // type LoadDimensions struct {
-// 	gorm.Model
+// 	GormModelHiddenJson
 // 	Length float64 `json:"length"`
 // 	Width  float64 `json:"width"`
 // 	Height float64 `json:"height"`
 // }
 
 type State struct {
-	gorm.Model
+	GormModelHiddenJson
 	HeaderID              int           `json:"headerId"`
 	Timestamp             string        `json:"timestamp"`
 	Version               string        `json:"version"`
@@ -116,18 +116,18 @@ type State struct {
 	EdgeStates            []EdgeState   `gorm:"many2many:state_edge_state;" json:"edgeStates"`
 	Driving               bool          `json:"driving"`
 	ActionStates          []ActionState `gorm:"many2many:state_action_state;" json:"actionStates"`
-	BatteryStateID        int           `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	BatteryStateID        int           `json:"-"` // Not  in the vda55 struct, simply a field for GORM
 	BatteryState          BatteryState  `gorm:"foreignKey:BatteryStateID;" json:"batteryState"`
 	OperatingMode         string        `json:"operatingMode"`
 	Errors                []StateError  `gorm:"many2many:state_errors;" json:"errors"`
-	SafetyStateID         int           `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	SafetyStateID         int           `json:"-"` // Not  in the vda55 struct, simply a field for GORM
 	SafetyState           SafetyState   `gorm:"foreignKey:SafetyStateID;" json:"safetyState"`
 	Maps                  []AmrMap      `gorm:"many2many:state_maps;" json:"maps"`
 	ZoneSetID             string        `json:"zoneSetId"`
 	Paused                bool          `json:"paused"`
 	NewBaseRequest        bool          `json:"newBaseRequest"`
 	DistanceSinceLastNode float64       `json:"distanceSinceLastNode"`
-	AgvPositionID         int           `json:"-,omitempty"` // Not  in the vda55 struct, simply a field for GORM
+	AgvPositionID         int           `json:"-"` // Not  in the vda55 struct, simply a field for GORM
 	AgvPosition           AgvPosition   `gorm:"foreignKey:AgvPositionID;" json:"agvPosition"`
 	Velocity              Velocity      `gorm:"-; " json:"velocity"` // We should not save such volatile data in our database. This should only be extracted from mqtt.
 	Loads                 []Load        `gorm:"many2many:state_loads;" json:"loads"`

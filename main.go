@@ -2,7 +2,9 @@ package main
 
 import (
 	"TobiasFP/BotNana/config"
+	mqttstate "TobiasFP/BotNana/controllers/mqtt"
 	"TobiasFP/BotNana/models"
+
 	mqttroutes "TobiasFP/BotNana/routes/mqtt"
 	restroutes "TobiasFP/BotNana/routes/rest"
 	"flag"
@@ -30,6 +32,7 @@ func main() {
 	log.Println("Starting up")
 
 	models.ConnectDatabase()
-	go mqttroutes.StartMqtt()
+	mqttstate.StartMqtt()
+	go mqttroutes.StartSubscribing(mqttstate.Client)
 	restroutes.StartGin()
 }

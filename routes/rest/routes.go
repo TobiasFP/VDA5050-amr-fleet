@@ -31,7 +31,7 @@ var (
 	clientID        = ""
 	clientIDDev     = "botnana"
 	clientSecret    = ""
-	clientSecretDev = "HmLxxeKkfiDZXvBTocvUW13nBUXOgO4c"
+	clientSecretDev = "sJGdGuHDvP44SpwKqlVbcqNOu6u17V4K"
 )
 
 // StartGin function
@@ -109,6 +109,7 @@ func StartGin() {
 	orderGroup := v1.Group("/orders")
 	orderGroup.GET("/all", order.All)
 	orderGroup.POST("/", order.Create)
+	orderGroup.POST("/assign", order.AssignAnonymous)
 
 	helloWorldGroup := v1.Group("/helloworld")
 	helloWorldGroup.GET("/", helloworld)
