@@ -42,6 +42,7 @@ jobs:
           echo "version=$(git describe --tags --always --dirty | cut -c2-)" >> "$GITHUB_OUTPUT"
           echo "tree-state=$(if git diff --quiet; then echo "clean"; else echo "dirty"; fi)" >> "$GITHUB_OUTPUT"
   build:
+    needs: args
     permissions:
       id-token: write # To sign.
       contents: write # To upload release assets.
