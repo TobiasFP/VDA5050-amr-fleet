@@ -32,7 +32,7 @@ binary: binary-{{ .Os }}-{{ .Arch }}
 
 # (Optional) ldflags generated dynamically in the workflow, and set as the `evaluated-envs` input variables in the workflow.
 ldflags:
-  - "-X main.Version={{ .Env.version }}"
-  - "-X main.Commit={{ .Env.commit }}"
-  - "-X main.CommitDate={{ .Env.commit_date }}"
-  - "-X main.TreeState={{ .Env.tree_state }}"
+  - "-X main.Version={{ version }}"
+  - "-X main.Commit={{ commit }}"
+  - "-X main.CommitDate={{ commit_date }}"
+  - "-X main.TreeState={{ tree_state }}"
