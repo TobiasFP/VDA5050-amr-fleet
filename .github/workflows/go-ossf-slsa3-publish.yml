@@ -24,6 +24,8 @@ permissions: read-all
 
 jobs:
   args:
+    needs:
+      - test
     runs-on: ubuntu-latest
     outputs:
       commit-date: ${{ steps.ldflags.outputs.commit-date }}
@@ -31,10 +33,6 @@ jobs:
       version: ${{ steps.ldflags.outputs.version }}
       tree-state: ${{ steps.ldflags.outputs.tree-state }}
     steps:
-      - id: checkout
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579 # tag=v2.3.4
-        with:
-          fetch-depth: 0
       - id: ldflags
         run: |
           echo "commit-date=$(git log --date=iso8601-strict -1 --pretty=%ct)" >> "$GITHUB_OUTPUT"
@@ -51,9 +49,8 @@ jobs:
       - run: go test -v ./...
 
   build:
-    needs: 
+    needs:
       - args
-      - test
     permissions:
       id-token: write # To sign.
       contents: write # To upload release assets.
