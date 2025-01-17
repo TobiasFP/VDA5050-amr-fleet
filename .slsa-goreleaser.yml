@@ -30,9 +30,3 @@ goarch: amd64
 # {{ .Arch }} will be replaced by goarch field in the config file.
 binary: binary-{{ .Os }}-{{ .Arch }}
 
-# (Optional) ldflags generated dynamically in the workflow, and set as the `evaluated-envs` input variables in the workflow.
-ldflags:
-  - "-X main.Version={{ version }}"
-  - "-X main.Commit={{ commit }}"
-  - "-X main.CommitDate={{ commit_date }}"
-  - "-X main.TreeState={{ tree_state }}"
