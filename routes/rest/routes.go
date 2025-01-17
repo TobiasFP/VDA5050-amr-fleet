@@ -96,7 +96,8 @@ func StartGin() {
 
 	mapsGroup := v1.Group("/maps")
 	mapsGroup.GET("/all", restmap.AllMaps)
-	mapsGroup.GET("/map", restmap.Map)
+	mapsGroup.GET("/:mapID", restmap.Map)
+	mapsGroup.POST("/", restmap.Create)
 
 	edgeGroup := v1.Group("/edges")
 	edgeGroup.GET("/all", edge.All)

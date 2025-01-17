@@ -2,13 +2,12 @@ package restmap
 
 import (
 	"TobiasFP/BotNana/models"
-	"bufio"
 	"encoding/base64"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // @Summary Get all maps
@@ -28,15 +27,52 @@ func AllMaps(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {string} data
-// @Router /maps/map [get]
+// @Router /maps/:mapID [get]
+
+// Deferring to use an actual NoSql DB as it just adds complexity.
+// In the future, if we are bottlenecked or if this is problematic with scalability,
+// we should simply instantiate a mongodb or an elasticsearch instance.
 func Map(ctx *gin.Context) {
-	mapPgmFile, err := os.Open("assets/maps/99187cd1-8b4b-4f5a-ac11-e455928409de.pgm")
-	if err != nil {
-		panic(err)
+	mapID := ctx.Param("mapID")
+
+	var amrMap models.AmrMap
+
+	mapResult := models.DB.Preload("MapData").Where("map_id = ?", mapID).First(&amrMap)
+	if mapResult.Error != nil {
+		ctx.Error(mapResult.Error)
 	}
-	defer mapPgmFile.Close()
-	PgmFileReader := bufio.NewReader(mapPgmFile)
-	Pgmcontent, _ := io.ReadAll(PgmFileReader)
-	PgmBase64 := base64.StdEncoding.EncodeToString(Pgmcontent)
-	ctx.JSON(http.StatusOK, gin.H{"data": PgmBase64})
+	mapDataAsB64 := base64.StdEncoding.EncodeToString(amrMap.MapData.Data)
+	ctx.JSON(http.StatusOK, gin.H{"data": mapDataAsB64})
+}
+
+func Create(ctx *gin.Context) {
+	var amrMap models.AmrMap
+	// We are simply receiving an AMR Map.
+	// This could be optimised by sending binary data from the frontend
+	// instead of a b64 encoded string of the map data, but currently,
+	// this is overkill.
+	mapFile, mapsErr := ctx.FormFile("map")
+	if mapsErr != nil {
+		ctx.JSON(400, gin.H{"error": mapsErr.Error()})
+		return
+	}
+
+	mapDescription, _ := ctx.GetPostForm("mapDescription")
+
+	amrMap.MapDescription = mapDescription
+	fileData, _ := mapFile.Open()
+
+	byteContainer, err := io.ReadAll(fileData)
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	amrMap.MapID = uuid.New()
+	amrMap.MapData.Data = byteContainer
+	createErr := models.DB.Create(&amrMap)
+	if createErr.Error != nil {
+		ctx.JSON(400, gin.H{"error": createErr.Error.Error()})
+		return
+	}
+	ctx.JSON(http.StatusOK, amrMap)
 }

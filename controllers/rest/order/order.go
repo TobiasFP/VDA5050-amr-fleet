@@ -18,6 +18,7 @@ func Create(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&orderDetails)
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
 	}
 	orderDetails.Order.OrderID = uuid.New().String()
 
@@ -52,6 +53,7 @@ func AssignAnonymous(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&assignOrder)
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
+		return
 	}
 
 	var orderDetails models.OrderTemplateDetails
@@ -59,10 +61,12 @@ func AssignAnonymous(ctx *gin.Context) {
 	orderDetailResults := models.DB.Model(&models.OrderTemplateDetails{}).Preload("Order").Preload("Order.Nodes").Preload("Order.Edges").Where("ID = ?", assignOrder.ID).First(&orderDetails)
 	if orderDetailResults.RowsAffected == 0 {
 		ctx.JSON(400, gin.H{"error": "No Order Template with the given ID found."})
+		return
 	}
 
 	if orderDetailResults.Error != nil {
 		ctx.JSON(400, gin.H{"error": orderDetailResults.Error.Error()})
+		return
 	}
 
 	// We sadly need to create a new order, as we cannot simply do:
@@ -84,6 +88,7 @@ func AssignAnonymous(ctx *gin.Context) {
 
 	if orderCreateRes.Error != nil {
 		ctx.JSON(400, gin.H{"error": orderCreateRes.Error.Error()})
+		return
 	}
 	mqttstate.AssignOrder(mqttstate.Client, order)
 	ctx.JSON(http.StatusOK, assignOrder)

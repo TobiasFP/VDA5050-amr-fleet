@@ -23,6 +23,7 @@ func ConnectDatabase() {
 		&State{},
 		&StateError{},
 		&AgvPosition{},
+		&AmrMapData{},
 		&AmrMap{},
 		&SafetyState{},
 		&Info{},
