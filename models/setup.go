@@ -4,18 +4,14 @@ import (
 	"TobiasFP/BotNana/conn"
 	"log"
 
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
 
-func ConnectDatabase() {
-	db, err := conn.GetMysqlDB()
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
-	err = db.AutoMigrate(
+func MigrateDB(db *gorm.DB) {
+	err := db.AutoMigrate(
 		&NodeState{},
 		&EdgeState{},
 		&ActionState{},
@@ -51,6 +47,21 @@ func ConnectDatabase() {
 	err = db.AutoMigrate(
 		&OrderTemplateDetails{},
 	)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+}
+
+func ConnectTestingDatabase() {
+	db, err := gorm.Open(sqlite.Open("gormtest.sqlite"), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	DB = db
+}
+
+func ConnectDatabase() {
+	db, err := conn.GetMysqlDB()
 	if err != nil {
 		log.Fatal(err.Error())
 	}

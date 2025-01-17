@@ -32,6 +32,7 @@ func main() {
 	log.Println("Starting up")
 
 	models.ConnectDatabase()
+	models.MigrateDB(models.DB)
 	mqttstate.StartMqtt()
 	go mqttroutes.StartSubscribing(mqttstate.Client)
 	restroutes.StartGin()

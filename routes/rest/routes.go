@@ -7,8 +7,7 @@ import (
 	"TobiasFP/BotNana/controllers/rest/node"
 	"TobiasFP/BotNana/controllers/rest/order"
 	"TobiasFP/BotNana/controllers/rest/restmap"
-	"TobiasFP/BotNana/controllers/rest/reststate"
-	"TobiasFP/BotNana/models" // swagger embed files
+	"TobiasFP/BotNana/controllers/rest/reststate" // swagger embed files
 	"log"
 	"net/http"
 	"os"
@@ -36,8 +35,6 @@ var (
 
 // StartGin function
 func StartGin() {
-	models.ConnectDatabase()
-
 	conf := config.GetConfig()
 	production := conf.GetBool("production")
 	if !production {

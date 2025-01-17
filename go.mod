@@ -4,6 +4,8 @@ go 1.22.2
 
 require github.com/tbaehler/gin-keycloak v1.6.1
 
+require github.com/mattn/go-sqlite3 v1.14.22 // indirect
+
 require (
 	cloud.google.com/go/auth v0.10.2 // indirect
 	cloud.google.com/go/auth/oauth2adapt v0.2.5 // indirect
@@ -100,5 +102,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
+	gorm.io/driver/sqlite v1.5.7
 	gorm.io/gorm v1.25.12 // indirect
 )

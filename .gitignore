@@ -38,3 +38,4 @@ _python/test_data/AGTC_3_4.picle
 __debug_bin*
 __debug_bin
 config/devtest.yaml
+*.sqlite
