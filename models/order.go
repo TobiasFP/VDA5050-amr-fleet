@@ -19,23 +19,6 @@ type Node struct {
 	NodePosition    NodePosition `gorm:"foreignKey:NodePositionID;" json:"nodePosition"`
 }
 
-type Action struct {
-	GormModelHiddenJson
-
-	ActionID          string            `json:"actionId"`
-	ActionType        string            `json:"actionType"`
-	BlockingType      string            `json:"blockingType"`
-	ActionDescription string            `json:"actionDescription"`
-	ActionParameters  []ActionParameter `gorm:"many2many:action_actionparameters;" json:"actionParameters"`
-}
-
-type ActionParameter struct {
-	GormModelHiddenJson
-
-	Key   string  `json:"key"`
-	Value float64 `json:"value"`
-}
-
 type NodePosition struct {
 	GormModelHiddenJson
 

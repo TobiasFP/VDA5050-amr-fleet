@@ -25,7 +25,24 @@ func Create(ctx *gin.Context) {
 // @Success 200 {slice} []models.NodeMeta data "ok"
 // @Router /nodes/all [get]
 func All(ctx *gin.Context) {
-	var nodes []models.NodeMeta
-	models.DB.Preload("Node").Preload("Node.NodePosition").Find(&nodes)
-	ctx.JSON(http.StatusOK, gin.H{"data": nodes})
+	var unfilteredNodes []models.NodeMeta
+
+	models.DB.Preload("Node").Preload("Node.NodePosition").Find(&unfilteredNodes)
+
+	// This could be optimised with a better db query, but the gains are
+	// most likely  too small
+	mapID := ctx.Param("mapid")
+	if mapID != "" {
+		var filteredNodes []models.NodeMeta
+		for _, node := range unfilteredNodes {
+			if node.Node.NodePosition.MapID == mapID {
+				filteredNodes = append(filteredNodes, node)
+			}
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"data": filteredNodes})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"data": unfilteredNodes})
 }

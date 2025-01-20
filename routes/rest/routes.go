@@ -3,6 +3,7 @@ package restroutes
 import (
 	"TobiasFP/BotNana/config"
 	"TobiasFP/BotNana/controllers/auth"
+	"TobiasFP/BotNana/controllers/rest/action"
 	"TobiasFP/BotNana/controllers/rest/edge"
 	"TobiasFP/BotNana/controllers/rest/node"
 	"TobiasFP/BotNana/controllers/rest/order"
@@ -102,7 +103,16 @@ func StartGin() {
 
 	nodeGroup := v1.Group("/nodes")
 	nodeGroup.GET("/all", node.All)
+	nodeGroup.GET("/all/:mapid", node.All)
 	nodeGroup.POST("/", node.Create)
+
+	actionGroup := v1.Group("/actions")
+	actionGroup.GET("/all", action.All)
+	actionGroup.POST("/", action.Create)
+	actionGroup.GET("/allactionparameters", action.AllActionParams)
+	actionGroup.POST("/actionparameter", action.CreateActionParameters)
+	actionGroup.GET("/allinstantactions", action.AllInstantActions)
+	actionGroup.POST("/instantaction", action.CreateInstantAction)
 
 	orderGroup := v1.Group("/orders")
 	orderGroup.GET("/all", order.All)
