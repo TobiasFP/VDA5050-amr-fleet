@@ -24,5 +24,5 @@ type InstantAction struct {
 	Version      string   `json:"version"`
 	Manufacturer string   `json:"manufacturer"`
 	SerialNumber string   `json:"serialNumber"`
-	Actions      []Action `json:"actions"`
+	Actions      []Action `gorm:"many2many:instantaction_actions;" json:"actions"`
 }

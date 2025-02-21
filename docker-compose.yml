@@ -55,7 +55,6 @@ services:
       KEYCLOAK_USER: $kc_user
       KEYCLOAK_PASSWORD: $kc_pw
       KC_LOG_LEVEL: info
-    restart: unless-stopped
     depends_on:
       - mariadb
     ports:
@@ -66,6 +65,23 @@ services:
       interval: 15s
       timeout: 2s
       retries: 15
+  mongo:
+    image: mongo:8.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017" # Expose MongoDB on the default port
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $DB_USERNAME # Set the admin username
+      MONGO_INITDB_ROOT_PASSWORD: $DB_PASSWORD # Set the admin password
+    volumes:
+      - mongo-data:/data/db # Persist MongoDB data
+      - mongo-config:/data/configdb # Persist MongoDB configuration
+
 volumes:
   mysql_data:
+    driver: local
+  mongo-data:
+    driver: local
+  mongo-config:
     driver: local

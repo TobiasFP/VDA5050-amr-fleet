@@ -32,6 +32,7 @@ func MigrateDB(db *gorm.DB) {
 	err = db.AutoMigrate(
 		&ActionParameter{},
 		&Action{},
+		&InstantAction{},
 		&Corridor{},
 		&NodePosition{},
 		&Trajectory{},

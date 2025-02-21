@@ -1,0 +1,7 @@
+botnana
+${authBaseUrl}
+/realms/botnana/botnana
+http://localhost:8002/auth/callback
+http://localhost:8002
+http://localhost
+http://localhost:8100
