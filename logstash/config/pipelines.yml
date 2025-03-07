@@ -1,0 +1,2 @@
+- pipeline.id: send_go_logs
+  path.config: "/usr/share/logstash/pipeline/send_go_logs.conf"

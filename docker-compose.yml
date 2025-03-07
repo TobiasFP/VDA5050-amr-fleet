@@ -65,23 +65,58 @@ services:
       interval: 15s
       timeout: 2s
       retries: 15
-  mongo:
-    image: mongo:8.0
-    container_name: mongodb
-    restart: always
+
+  logstash:
+    build:
+      context: docker/logstash
+    env_file: .env
+    links:
+      - elasticsearch
     ports:
-      - "27017:27017" # Expose MongoDB on the default port
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: $DB_USERNAME # Set the admin username
-      MONGO_INITDB_ROOT_PASSWORD: $DB_PASSWORD # Set the admin password
+      - "5044:5044"
+      - "5400:5400"
     volumes:
-      - mongo-data:/data/db # Persist MongoDB data
-      - mongo-config:/data/configdb # Persist MongoDB configuration
+      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./logstash/pipelines/:/usr/share/logstash/pipeline/
+      - ./logstash/queries/:/usr/share/logstash/config/queries/
+      - ./logs.txt:/data/logs.txt
+    depends_on:
+      - elasticsearch
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.2
+    environment:
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=9LN99HfnNOrtu0k
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    labels:
+      co.elastic.logs/enabled: false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 9200:9200
+
+  kibana:
+    labels:
+      co.elastic.logs/enabled: false
+    image: docker.elastic.co/kibana/kibana:8.17.2
+    depends_on:
+      - elasticsearch
+    healthcheck:
+      test: ["CMD", "curl", "-s", "-f", "http://localhost:5601/api/status"]
+      interval: 3s
+      timeout: 3s
+      retries: 80
+    ports:
+      - 5601:5601
 
 volumes:
   mysql_data:
-    driver: local
-  mongo-data:
-    driver: local
-  mongo-config:
     driver: local

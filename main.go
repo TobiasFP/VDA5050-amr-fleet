@@ -4,6 +4,7 @@ import (
 	"TobiasFP/BotNana/config"
 	mqttstate "TobiasFP/BotNana/controllers/mqtt"
 	"TobiasFP/BotNana/models"
+	"time"
 
 	mqttroutes "TobiasFP/BotNana/routes/mqtt"
 	restroutes "TobiasFP/BotNana/routes/rest"
@@ -18,16 +19,15 @@ func main() {
 	flag.Parse()
 
 	config.Init(*environment)
-
-	if *environment != "production" {
-		log.SetFlags(log.LstdFlags | log.Lshortfile)
-		file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		log.SetOutput(file)
+	log.SetFlags(0)
+	log.SetPrefix(time.Now().Format(time.RFC3339) + " ")
+	log.SetFlags(log.Lshortfile)
+	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	log.SetOutput(file)
 
 	log.Println("Starting up")
 

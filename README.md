@@ -76,6 +76,10 @@ Having the REST api will make the design of a front end very easy, and will also
 
 Well, we don't. That being said, we do allow integrations by having an integrations folder, where “vda5050 mqtt to vendor specific interfaces” can be implemented. 
 
+#### Observability
+The software will be built with proper observability features via the Elastic stack.
+This is basically because it is nice, but also because I just started a position as a SIEM / Observability contractor and therefore, it is the "new" thing for me.
+
 #### Structure
 
 VDA5050 will of course be implemented with MQTT, all MQTT handlers
