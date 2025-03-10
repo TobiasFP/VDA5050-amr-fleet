@@ -19,20 +19,29 @@ func main() {
 	flag.Parse()
 
 	config.Init(*environment)
-	log.SetFlags(0)
-	log.SetPrefix(time.Now().Format(time.RFC3339) + " ")
-	log.SetFlags(log.Lshortfile)
-	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(err)
+	config := config.GetConfig()
+
+	logToLogStash := config.GetBool("logging.logToLogStash")
+	if logToLogStash {
+		log.SetFlags(0)
+		log.SetPrefix(time.Now().Format(time.RFC3339) + " ")
+		log.SetFlags(log.Lshortfile)
+		file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.SetOutput(file)
 	}
-
-	log.SetOutput(file)
-
 	log.Println("Starting up")
 
 	models.ConnectDatabase()
 	models.MigrateDB(models.DB)
+
+	addTestData := config.GetBool("addTestData")
+	if addTestData {
+		models.AddTestData()
+	}
 	mqttstate.StartMqtt()
 	go mqttroutes.StartSubscribing(mqttstate.Client)
 	restroutes.StartGin()

@@ -22,3 +22,5 @@ logging:
   logToLogStash: True
   logStashHost: "localhost"
   logStashPort: "5044"
+
+  addTestData: true

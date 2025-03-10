@@ -133,13 +133,11 @@ After this, run this project, either with "go run main.go" or hitting F5 in VSCo
 Now, open the following page in a webbrowser:
 http://localhost:7080
 
-Login with yuor admin credentials, create a new realm named botnana (refer to the keykloak documentation), and setup a new client under this realm just like it has been setup in the following image, that can be found here, in this repo:
+Login with yuor admin credentials, create a new realm named botnana either by using the file found here: "docs/realm-export.json" or setup everything under this realm just like it has been setup in the following image, that can be found here, in this repo:
 info/realm-settings.png
 
 Under the client, go to credentials, and use the client secret in the file "routes/rest/routes.go" and put in the var: "clientSecretDev".
 Client Secret Dev should already be set to botnana, but if you want to have another name for this, just set it there.
-
-This will be parametrized later.
 
 Also, make sure to create a new user and a password for this user, under the tab "users".
 
