@@ -64,7 +64,7 @@ proper front-end for your end users.
 
 Plane and simple, to keep complexity low. With a fleet management system, it will be impossible to make a system void of complexity, but to lower the amount of complexity, separation of concern will be vital. Therefore, the mqtt setup is in place to manage the robots with the vda5050 compliant protocols, and REST will be the “human” facing interface that can be used to present data, and to initiate actions in the fleet. 
 
-Therefore, there will also be two databases (both MySql, but can be swapped out with postgres or even a nosql database, as the ORM “GORM” will be used) in the system, one “mqtt” database to persist and manage mqtt data, and a user facing database, where user settings, etc. Can be accessed. 
+Therefore, there will also be two databases (one MySQL/MariaDB (but can be swapped out with postgres), one noSQL (Elastic), as the ORM “GORM” will be used) in the system, a user facing database, where user settings, order templates, etc. Can be accessed. Another NoSQL database to store non-relational data (eg. actions, key-value, etc), and use for SIEM (https://en.wikipedia.org/wiki/Security_information_and_event_management).
 The mqtt server will have read/write access to the mqtt database, but not have access to the REST database.
 The REST server will have read/write access to the REST database, and will only have Read access to the MQTT database. 
 This also means that the REST server is completely optional for the fleet to function. This means that if someone wants to take the Spartan/puritan approach and make everything with mqtt, this can easily be added on top. 
@@ -154,25 +154,11 @@ This should first redirect you to the backend located at https://localhost:8002,
 
 ### So, how do we make money? You do this for the money, right? Right? 
 
-Well, currently i have no idea which way I'm going to go with this. I have some ideas as to how, which are: 
-1. All in open source, hope it grows and gets adopted by some robotics firms and hope build a consulting business
-2. All in open source, no profits, just doing it because i think it's fun. 
-3. The Odoo model: build the core features and release it properly, open source, but then make modules that are closed source that adds features
-4. The Harness DRONE model: do everything in a restricted open source manner, that limits the commercial usage of the software, but keeps the code open source
-5. Closed source, seeking investors: it will be hard to gain traction in such a competitive market. I am definitely open if some company wants to invest. 
-
-I lean towards #1 or #2, as i like open source a lot and this means the project gets to be my hobby, and I can still make money by doing contract work. This means little to no chance of profiting but maybe, just maybe, my awesome code will show people how to do proper software and will serve as a foundation for some robotics platforms. 
-
-
-#### Decision
 I have decided on the following:
 Keep the base GoLang project completely open source with the least restricted model possible (MIT).
 
 The Frontend and vda5050 amr simulator however will be kept open to view, but very restricted, in that if you want to use these purposes you have to contact me and make a deal. 
 
-### Acquiring partners
-
-There are so many small robotics startups that simply don't have the time to write fleet software. By telling them to just support the vda5050 from the start and pay me to add fleet features must be a lot cheaper and easier than building everything from scratch. By contacting robotics firms and convincing them to let me do the hard part will surely be an easy way of getting partners.
 
 ### Work management 
 

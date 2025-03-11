@@ -15,7 +15,7 @@ func Create(ctx *gin.Context) {
 	ctx.BindJSON(&edge)
 	edge.EdgeID = uuid.New().String()
 
-	models.DB.Create(&edge)
+	models.SqlDB.Create(&edge)
 	ctx.JSON(http.StatusOK, edge)
 }
 
@@ -27,6 +27,6 @@ func Create(ctx *gin.Context) {
 // @Router /edge/all [get]
 func All(ctx *gin.Context) {
 	var edges []models.Edge
-	models.DB.Find(&edges)
+	models.SqlDB.Find(&edges)
 	ctx.JSON(http.StatusOK, gin.H{"data": edges})
 }

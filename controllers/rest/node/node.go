@@ -14,7 +14,7 @@ func Create(ctx *gin.Context) {
 	var node models.NodeMeta
 	ctx.BindJSON(&node)
 	node.Node.NodeID = uuid.New().String()
-	models.DB.Create(&node)
+	models.SqlDB.Create(&node)
 	ctx.JSON(http.StatusOK, node)
 }
 
@@ -27,7 +27,7 @@ func Create(ctx *gin.Context) {
 func All(ctx *gin.Context) {
 	var unfilteredNodes []models.NodeMeta
 
-	models.DB.Preload("Node").Preload("Node.NodePosition").Find(&unfilteredNodes)
+	models.SqlDB.Preload("Node").Preload("Node.NodePosition").Find(&unfilteredNodes)
 
 	// This could be optimised with a better db query, but the gains are
 	// most likely  too small

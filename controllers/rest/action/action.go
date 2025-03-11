@@ -15,7 +15,7 @@ func Create(ctx *gin.Context) {
 	ctx.BindJSON(&action)
 	action.ActionID = uuid.New().String()
 
-	models.DB.Create(&action)
+	models.SqlDB.Create(&action)
 	ctx.JSON(http.StatusOK, action)
 }
 
@@ -27,7 +27,7 @@ func Create(ctx *gin.Context) {
 // @Router /edge/all [get]
 func All(ctx *gin.Context) {
 	var actions []models.Action
-	models.DB.Find(&actions)
+	models.SqlDB.Find(&actions)
 	ctx.JSON(http.StatusOK, gin.H{"data": actions})
 }
 
@@ -39,7 +39,7 @@ func All(ctx *gin.Context) {
 // @Router /edge/all [get]
 func AllActionParams(ctx *gin.Context) {
 	var actionParams []models.ActionParameter
-	models.DB.Find(&actionParams)
+	models.SqlDB.Find(&actionParams)
 	ctx.JSON(http.StatusOK, gin.H{"data": actionParams})
 }
 
@@ -47,7 +47,7 @@ func CreateActionParameters(ctx *gin.Context) {
 	var actionParam models.ActionParameter
 	ctx.BindJSON(&actionParam)
 
-	models.DB.Create(&actionParam)
+	models.SqlDB.Create(&actionParam)
 	ctx.JSON(http.StatusOK, actionParam)
 }
 
@@ -59,7 +59,7 @@ func CreateActionParameters(ctx *gin.Context) {
 // @Router /edge/all [get]
 func AllInstantActions(ctx *gin.Context) {
 	var instantActions []models.InstantAction
-	models.DB.Find(&instantActions)
+	models.SqlDB.Find(&instantActions)
 	ctx.JSON(http.StatusOK, gin.H{"data": instantActions})
 }
 
@@ -67,6 +67,6 @@ func CreateInstantAction(ctx *gin.Context) {
 	var instantAction models.InstantAction
 	ctx.BindJSON(&instantAction)
 
-	models.DB.Create(&instantAction)
+	models.SqlDB.Create(&instantAction)
 	ctx.JSON(http.StatusOK, instantAction)
 }

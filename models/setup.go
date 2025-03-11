@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+var SqlDB *gorm.DB
 
 func MigrateDB(db *gorm.DB) {
 	err := db.AutoMigrate(
@@ -61,7 +61,7 @@ func ConnectTestingDatabase() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	DB = db
+	SqlDB = db
 }
 
 func ConnectDatabase() {
@@ -70,7 +70,7 @@ func ConnectDatabase() {
 		log.Fatal(err.Error())
 	}
 
-	DB = db
+	SqlDB = db
 }
 
 func AddTestData() {
@@ -80,7 +80,7 @@ func AddTestData() {
 func addTestMap() {
 	// Only add test data if there is no data in the database
 	var maps []AmrMap
-	DB.Find(&maps)
+	SqlDB.Find(&maps)
 	if len(maps) > 0 {
 		return
 	}
@@ -109,7 +109,7 @@ func addTestMap() {
 	id := uuid.MustParse("99187cd1-8b4b-4f5a-ac11-e455928409de")
 	amrMap.MapID = id
 	amrMap.MapData.Data = byteContainer
-	createErr := DB.Create(&amrMap)
+	createErr := SqlDB.Create(&amrMap)
 	if createErr.Error != nil {
 		log.Fatal(createErr.Error.Error())
 		return

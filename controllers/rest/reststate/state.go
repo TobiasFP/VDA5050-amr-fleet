@@ -18,7 +18,7 @@ import (
 // @Router /amrs/positiondata [get]
 func AllStatesOnlyPositionData(ctx *gin.Context) {
 	var states []models.State
-	res := models.DB.Preload("Maps").Preload("AgvPosition").Select("serial_number").Find(&states)
+	res := models.SqlDB.Preload("Maps").Preload("AgvPosition").Select("serial_number").Find(&states)
 	if res.Error != nil {
 		ctx.Error(errors.New("no AMRs foundr"))
 	}
@@ -33,7 +33,7 @@ func AllStatesOnlyPositionData(ctx *gin.Context) {
 // @Router /amrs/all [get]
 func AllStates(ctx *gin.Context) {
 	var states []models.State
-	res := models.DB.Preload("BatteryState").Preload("Maps").Preload("SafetyState").Preload("AgvPosition").Find(&states)
+	res := models.SqlDB.Preload("BatteryState").Preload("Maps").Preload("SafetyState").Preload("AgvPosition").Find(&states)
 	if res.Error != nil {
 		ctx.Error(errors.New("no AMRs foundr"))
 	}
@@ -54,7 +54,7 @@ func State(ctx *gin.Context) {
 		return
 	}
 	var state models.State
-	res := models.DB.Where("serial_number = ?", SN).Preload("BatteryState").Preload("Maps").Preload("SafetyState").Preload("AgvPosition").First(&state)
+	res := models.SqlDB.Where("serial_number = ?", SN).Preload("BatteryState").Preload("Maps").Preload("SafetyState").Preload("AgvPosition").First(&state)
 	if res.Error != nil {
 		ctx.Error(errors.New("no AMR found with given serial number"))
 	}

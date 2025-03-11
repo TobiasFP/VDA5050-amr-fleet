@@ -36,7 +36,7 @@ func main() {
 	log.Println("Starting up")
 
 	models.ConnectDatabase()
-	models.MigrateDB(models.DB)
+	models.MigrateDB(models.SqlDB)
 
 	addTestData := config.GetBool("addTestData")
 	if addTestData {

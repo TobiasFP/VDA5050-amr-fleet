@@ -6,7 +6,7 @@ import (
 
 func TestUpdateAmrStateInDb(t *testing.T) {
 	ConnectTestingDatabase()
-	MigrateDB(DB)
+	MigrateDB(SqlDB)
 	state := State{
 		GormModelHiddenJson: GormModelHiddenJson{},
 		HeaderID:            0,
@@ -50,7 +50,7 @@ func TestUpdateAmrStateInDb(t *testing.T) {
 		Loads:                 []Load{},
 		Information:           []Info{},
 	}
-	err := CreateAmrStateInDb(DB, state)
+	err := CreateAmrStateInDb(SqlDB, state)
 
 	if err != nil {
 		t.Errorf("got %q", err.Error())

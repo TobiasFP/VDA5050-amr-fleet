@@ -18,7 +18,7 @@ import (
 // @Router /maps/all [get]
 func AllMaps(ctx *gin.Context) {
 	var maps []models.AmrMap
-	models.DB.Find(&maps)
+	models.SqlDB.Find(&maps)
 	ctx.JSON(http.StatusOK, gin.H{"data": maps})
 }
 
@@ -37,7 +37,7 @@ func Map(ctx *gin.Context) {
 
 	var amrMap models.AmrMap
 
-	mapResult := models.DB.Preload("MapData").Where("map_id = ?", mapID).First(&amrMap)
+	mapResult := models.SqlDB.Preload("MapData").Where("map_id = ?", mapID).First(&amrMap)
 	if mapResult.Error != nil {
 		ctx.Error(mapResult.Error)
 	}
@@ -69,7 +69,7 @@ func Create(ctx *gin.Context) {
 	}
 	amrMap.MapID = uuid.New()
 	amrMap.MapData.Data = byteContainer
-	createErr := models.DB.Create(&amrMap)
+	createErr := models.SqlDB.Create(&amrMap)
 	if createErr.Error != nil {
 		ctx.JSON(400, gin.H{"error": createErr.Error.Error()})
 		return

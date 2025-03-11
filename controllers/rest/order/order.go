@@ -26,13 +26,13 @@ func Create(ctx *gin.Context) {
 	var node models.Node
 	for _, id := range orderDetails.NodeIds {
 
-		result := models.DB.Where("node_id = ?", id).First(&node)
+		result := models.SqlDB.Where("node_id = ?", id).First(&node)
 		if result.RowsAffected == 1 && result.Error == nil {
 			nodes = append(nodes, node)
 		}
 	}
 	orderDetails.Order.Nodes = nodes
-	models.DB.Create(&orderDetails)
+	models.SqlDB.Create(&orderDetails)
 	ctx.JSON(http.StatusOK, orderDetails)
 }
 
@@ -44,7 +44,7 @@ func Create(ctx *gin.Context) {
 // @Router /orders/all [get]
 func All(ctx *gin.Context) {
 	var orderTemplate []models.OrderTemplateDetails
-	models.DB.Preload("Order").Find(&orderTemplate)
+	models.SqlDB.Preload("Order").Find(&orderTemplate)
 	ctx.JSON(http.StatusOK, gin.H{"data": orderTemplate})
 }
 
@@ -58,7 +58,7 @@ func AssignAnonymous(ctx *gin.Context) {
 
 	var orderDetails models.OrderTemplateDetails
 
-	orderDetailResults := models.DB.Model(&models.OrderTemplateDetails{}).Preload("Order").Preload("Order.Nodes").Preload("Order.Edges").Where("ID = ?", assignOrder.ID).First(&orderDetails)
+	orderDetailResults := models.SqlDB.Model(&models.OrderTemplateDetails{}).Preload("Order").Preload("Order.Nodes").Preload("Order.Edges").Where("ID = ?", assignOrder.ID).First(&orderDetails)
 	if orderDetailResults.RowsAffected == 0 {
 		ctx.JSON(400, gin.H{"error": "No Order Template with the given ID found."})
 		return
@@ -84,7 +84,7 @@ func AssignAnonymous(ctx *gin.Context) {
 		ZoneSetID:     "",
 	}
 
-	orderCreateRes := models.DB.Create(&order)
+	orderCreateRes := models.SqlDB.Create(&order)
 
 	if orderCreateRes.Error != nil {
 		ctx.JSON(400, gin.H{"error": orderCreateRes.Error.Error()})

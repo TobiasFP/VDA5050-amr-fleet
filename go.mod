@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/tbaehler/gin-keycloak v1.6.1
 	github.com/telkomdev/go-stash v1.0.6
+	github.com/elastic/go-elasticsearch/v8 v8.17.1
 )
 
 require github.com/mattn/go-sqlite3 v1.14.22 // indirect

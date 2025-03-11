@@ -40,7 +40,7 @@ func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 
 	// Check if already in DB:
 	var amrInDB models.State
-	amrInDBResult := models.DB.Preload("AgvPosition").Where("serial_number = ?", amrFromMqtt.SerialNumber).First(&amrInDB)
+	amrInDBResult := models.SqlDB.Preload("AgvPosition").Where("serial_number = ?", amrFromMqtt.SerialNumber).First(&amrInDB)
 	if amrInDBResult.Error != nil {
 		if errors.Is(amrInDBResult.Error, gorm.ErrRecordNotFound) {
 			// If the amr is simply not in the db, create it.
@@ -53,11 +53,11 @@ func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 
 	if amrInDBResult.RowsAffected == 1 {
 		// if the amr is already in the db, just update it.
-		models.UpdateAmrStateInDb(models.DB, amrInDB, amrFromMqtt)
+		models.UpdateAmrStateInDb(models.SqlDB, amrInDB, amrFromMqtt)
 		return
 	}
 
-	unmarshallErr = models.CreateAmrStateInDb(models.DB, amrFromMqtt)
+	unmarshallErr = models.CreateAmrStateInDb(models.SqlDB, amrFromMqtt)
 	if unmarshallErr != nil {
 		log.Print("Error creating the mqtt amr in db")
 		log.Print(unmarshallErr.Error())
