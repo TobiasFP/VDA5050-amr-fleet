@@ -3,12 +3,15 @@ module TobiasFP/BotNana
 go 1.22.2
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.17.1
 	github.com/tbaehler/gin-keycloak v1.6.1
 	github.com/telkomdev/go-stash v1.0.6
-	github.com/elastic/go-elasticsearch/v8 v8.17.1
 )
 
-require github.com/mattn/go-sqlite3 v1.14.22 // indirect
+require (
+	github.com/elastic/elastic-transport-go/v8 v8.6.1 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+)
 
 require (
 	cloud.google.com/go/auth v0.10.2 // indirect
@@ -24,6 +27,7 @@ require (
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/eclipse/paho.mqtt.golang v1.5.0
+	github.com/elastic/go-elasticsearch v0.0.0
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect

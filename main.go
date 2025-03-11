@@ -42,6 +42,9 @@ func main() {
 	if addTestData {
 		models.AddTestData()
 	}
+
+	models.ConnectElastic()
+
 	mqttstate.StartMqtt()
 	go mqttroutes.StartSubscribing(mqttstate.Client)
 	restroutes.StartGin()

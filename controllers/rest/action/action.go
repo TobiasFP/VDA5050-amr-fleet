@@ -2,6 +2,8 @@ package action
 
 import (
 	"TobiasFP/BotNana/models"
+	"context"
+	"encoding/json"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -39,7 +41,19 @@ func All(ctx *gin.Context) {
 // @Router /edge/all [get]
 func AllActionParams(ctx *gin.Context) {
 	var actionParams []models.ActionParameter
-	models.SqlDB.Find(&actionParams)
+
+	allActionParametersRes, err := models.NoSqlDB.Search().Index("actionparameters").Do(context.Background())
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	for _, hit := range allActionParametersRes.Hits.Hits {
+		var actionParam models.ActionParameter
+		json.Unmarshal(hit.Source_, &actionParam)
+		actionParams = append(actionParams, actionParam)
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{"data": actionParams})
 }
 
@@ -47,7 +61,13 @@ func CreateActionParameters(ctx *gin.Context) {
 	var actionParam models.ActionParameter
 	ctx.BindJSON(&actionParam)
 
-	models.SqlDB.Create(&actionParam)
+	_, err := models.NoSqlDB.Index("actionparameters").Request(actionParam).Do(context.Background())
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, actionParam)
 }
 

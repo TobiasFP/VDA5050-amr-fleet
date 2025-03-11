@@ -6,10 +6,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/google/uuid"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
+
+var NoSqlDB *elasticsearch.TypedClient
 
 var SqlDB *gorm.DB
 
@@ -33,7 +36,6 @@ func MigrateDB(db *gorm.DB) {
 		log.Fatal(err.Error())
 	}
 	err = db.AutoMigrate(
-		&ActionParameter{},
 		&Action{},
 		&InstantAction{},
 		&Corridor{},
@@ -71,6 +73,14 @@ func ConnectDatabase() {
 	}
 
 	SqlDB = db
+}
+func ConnectElastic() {
+	db, err := conn.GetElasticDB()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	NoSqlDB = db
 }
 
 func AddTestData() {
