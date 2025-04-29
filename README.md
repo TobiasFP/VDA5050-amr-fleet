@@ -149,6 +149,17 @@ http://localhost:8100/home
 
 This should first redirect you to the backend located at https://localhost:8002, which then redirects you to the keycloak Oauth realm botnana. Login and grant access. Now you have "securely" accessed the frontend, and we can now make secure rest requests to the backend.
 
+## Set up kibana, siem and apm
+
+1. Go to https://localhost:5601 and login as the elastic user from .env
+2. Open the APM section of kibana
+3. create an APM integration with default values and https://localhost 
+4. Add a fleet server on you dev machine, use the following command to install:
+
+sudo ./elastic-agent install --fleet-server-es=https://localhost:9200 --fleet-server-service-token=[new-service-token-from-kibana-frontend] --fleet-server-policy=fleet-server-policy --fleet-server-es-ca=[path_to_this_directory]/assets/certs/es01/es01.crt --certificate-authorities=[path_to_this_directory]/assets/certs/ca/ca.crt --fleet-server-port=8220
+
+5. enroll the apm agent policy in the fleet server agent
+6. Go to the apm section and see all the backend and frontend data streamed diretly 
 
 ## Business model
 

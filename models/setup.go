@@ -74,6 +74,7 @@ func ConnectDatabase() {
 
 	SqlDB = db
 }
+
 func ConnectElastic() {
 	db, err := conn.GetElasticDB()
 	if err != nil {

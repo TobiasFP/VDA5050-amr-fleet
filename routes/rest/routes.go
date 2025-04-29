@@ -9,12 +9,13 @@ import (
 	"TobiasFP/BotNana/controllers/rest/order"
 	"TobiasFP/BotNana/controllers/rest/restmap"
 	"TobiasFP/BotNana/controllers/rest/reststate" // swagger embed files
+	docs "TobiasFP/BotNana/docs"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	docs "TobiasFP/BotNana/docs"
+	"go.elastic.co/apm/module/apmgin/v2"
 
 	swaggerfiles "github.com/swaggo/files"
 
@@ -31,7 +32,7 @@ var (
 	clientID        = ""
 	clientIDDev     = "botnana"
 	clientSecret    = ""
-	clientSecretDev = "DbG3JmMVL8ZIWgdFfVvUhPxmyS97CRrQ"
+	clientSecretDev = "7bHrkxQSk3TMOSLqh640A5WE9i9VaDAp"
 )
 
 // StartGin function
@@ -44,6 +45,7 @@ func StartGin() {
 	}
 
 	router := gin.Default()
+	router.Use(apmgin.Middleware(router))
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
