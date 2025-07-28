@@ -32,7 +32,7 @@ var (
 	clientID        = ""
 	clientIDDev     = "botnana"
 	clientSecret    = ""
-	clientSecretDev = "7bHrkxQSk3TMOSLqh640A5WE9i9VaDAp"
+	clientSecretDev = "mwhSsm6NOXNwA6qTklBu8ObmXlM4amyY"
 )
 
 // StartGin function

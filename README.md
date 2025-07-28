@@ -13,7 +13,6 @@ A VDA 5050 compliant fleet software engine
 
 ## Why
 
-I am creating this project, to create my own job.
 I love Robots, and I love hooking up the real world
 with interesting software.
 This is my attempt at creating a Fleet software engine,
@@ -30,7 +29,7 @@ The purpose of BotNana is four fold:
 * To create an engine/platform which Robot developers can build upon (Like ROS for fleet management but without all the bad decisions - oh well, I will probably make a few.)
 * To make a complete, extendable, fleet management system that is ready for the VDA5050 revolution
 * To show off my awesome GoLang skills
-* To land me a consulting job at any interesting robotics firm 
+* To land me a consulting job at any interesting robotics firm - well, actually currently I'm quite happy, so for the time being, this statement is untrue.
 
 ## How
 
@@ -133,7 +132,7 @@ After this, run this project, either with "go run main.go" or hitting F5 in VSCo
 Now, open the following page in a webbrowser:
 http://localhost:7080
 
-Login with yuor admin credentials, create a new realm named botnana either by using the file found here: "docs/realm-export.json" or setup everything under this realm just like it has been setup in the following image, that can be found here, in this repo:
+Login with your admin credentials, create a new realm named botnana either by using the file found here: "docs/realm-export.json" or setup everything under this realm just like it has been setup in the following image, that can be found here, in this repo:
 info/realm-settings.png
 
 Under the client, go to credentials, and use the client secret in the file "routes/rest/routes.go" and put in the var: "clientSecretDev".
