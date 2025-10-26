@@ -1,0 +1,27 @@
+server.host: "0.0.0.0"
+telemetry.enabled: "false"
+xpack.fleet.packages:
+  - name: fleet_server
+    version: latest
+  - name: system
+    version: latest
+xpack.fleet.agentPolicies:
+  - name: fleet-server-policy
+    id: fleet-server-policy
+    is_default_fleet_server: true
+    is_managed: false
+    namespace: default
+    package_policies:
+      - name: fleet-server
+        package:
+          name: fleet_server
+      - name: system-fleet
+        package:
+          name: system
+  - name: agent-policy
+    id: agent-default-policy
+    namespace: default
+    package_policies:
+      - name: system-agent
+        package: 
+          name: system
