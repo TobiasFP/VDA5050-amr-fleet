@@ -161,7 +161,6 @@ services:
       elk-net:
         ipv4_address: 10.34.12.87
     volumes:
-      - ./configs/elasticsearch/es02-elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - certs:/usr/share/elasticsearch/config/certs
       - esdata02:/usr/share/elasticsearch/data
     environment:
@@ -212,7 +211,6 @@ services:
       elk-net:
         ipv4_address: 10.34.12.88
     volumes:
-      - ./configs/elasticsearch/es03-elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - certs:/usr/share/elasticsearch/config/certs
       - esdata03:/usr/share/elasticsearch/data
     environment:
