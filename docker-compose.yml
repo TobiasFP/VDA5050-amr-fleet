@@ -64,7 +64,6 @@ services:
       timeout: 2s
       retries: 15
 
-
   certs:
     image: ubuntu:24.04
     container_name: certs
@@ -116,6 +115,7 @@ services:
     environment:
       - node.name=es01
       - cluster.name=${CLUSTER_NAME}
+      - ${ELK_DISCOVERY_TYPE}
       - ${ES01_INITIAL_MASTER_NODES}
       - ${ES01_SEED_HOSTS}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
@@ -261,14 +261,14 @@ services:
       bash -c '
         cd /usr/share/certs;
         if [ -f kibana_user.exist ]; then
-          echo "kibana_system já criado"
+          echo "Kibana password changed.!"
           exit 0;
         fi;
         apt update && apt install -y curl;
         # cria ca
-        echo "configura password kibana_sytem";
+        echo "Change kibana_system password";
         curl -s -k -X POST --cacert /usr/share/certs/ca-siem.pem -u elastic:${ELASTIC_PASSWORD} -H "Content-Type: application/json" https://10.34.12.86:9200/_security/user/kibana_system/_password -d "{\"password\":\"${KIBANA_PASSWORD}\"}";
-        echo "password configurado";
+        echo "password changed";
         touch kibana_user.exist
       '
     networks:
@@ -377,23 +377,6 @@ services:
         - elk-net
 
 
-  logstash:
-    build:
-      context: docker/logstash
-    env_file: .env
-    links:
-      - es01
-    ports:
-      - "5044:5044"
-      - "5400:5400"
-    volumes:
-      - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml
-      - ./logstash/pipelines/:/usr/share/logstash/pipeline/
-      - ./logstash/queries/:/usr/share/logstash/config/queries/
-      - ./logs.txt:/data/logs.txt
-    depends_on:
-      - es01
-
 volumes:
   certs:
     driver: local
@@ -418,10 +401,4 @@ networks:
       config:
         - subnet: 10.34.12.0/24
           gateway: 10.34.12.1
-  logstash-net:
-    name: logstash-net
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.34.9.0/24
-          gateway: 10.34.9.1
+
