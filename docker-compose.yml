@@ -154,7 +154,8 @@ services:
     depends_on:
       certs:
         condition: service_completed_successfully
-
+    profiles:
+      - full-masters-cluster
     ports:
       - 9201:9200
     networks:
@@ -206,7 +207,8 @@ services:
     depends_on:
       certs:
         condition: service_completed_successfully
-
+    profiles:
+      - full-masters-cluster
     networks:
       elk-net:
         ipv4_address: 10.34.12.88
@@ -248,6 +250,37 @@ services:
       interval: 10s
       timeout: 10s
       retries: 120
+
+
+  es02-haproxy:
+    image: haproxy:latest
+    ports:
+      - 9201:9200
+    depends_on:
+      es01:
+        condition: service_healthy
+    profiles:
+      - proxied-masters-cluster
+    networks:
+      elk-net:
+        ipv4_address: 10.34.12.87
+    volumes:
+      - ./configs/haproxy:/usr/local/etc/haproxy
+
+  es03-haproxy:
+    image: haproxy:latest
+    ports:
+      - 9202:9200
+    depends_on:
+      es01:
+        condition: service_healthy
+    profiles:
+      - proxied-masters-cluster
+    networks:
+      elk-net:
+        ipv4_address: 10.34.12.88
+    volumes:
+      - ./configs/haproxy:/usr/local/etc/haproxy
 
   setup_kibana:
     depends_on: 
