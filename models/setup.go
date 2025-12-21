@@ -31,6 +31,7 @@ func MigrateDB(db *gorm.DB) {
 		&Info{},
 		&InfoReference{},
 		&Load{},
+		&Connection{},
 	)
 	if err != nil {
 		log.Fatal(err.Error())

@@ -1,6 +1,7 @@
 package action
 
 import (
+	mqttstate "TobiasFP/BotNana/controllers/mqtt"
 	"TobiasFP/BotNana/models"
 	"context"
 	"encoding/json"
@@ -88,5 +89,9 @@ func CreateInstantAction(ctx *gin.Context) {
 	ctx.BindJSON(&instantAction)
 
 	models.SqlDB.Create(&instantAction)
+	if mqttErr := mqttstate.PublishInstantAction(mqttstate.Client, instantAction); mqttErr != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": mqttErr.Error()})
+		return
+	}
 	ctx.JSON(http.StatusOK, instantAction)
 }

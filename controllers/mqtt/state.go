@@ -13,6 +13,10 @@ import (
 
 var Client mqtt.Client
 
+type Publisher interface {
+	Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token
+}
+
 func StartMqtt() {
 	conf := config.GetConfig()
 	broker := conf.GetString("mqttBroker")
@@ -64,12 +68,22 @@ func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 	}
 }
 
-func AssignOrder(client mqtt.Client, order models.Order) {
+func AssignOrder(client Publisher, order models.Order) {
 	message, err := json.Marshal(order)
 	if err != nil {
 		log.Fatal(err)
 	}
-	token := client.Publish("state", 0, false, message)
+	token := client.Publish("order", 0, false, message)
 	token.Wait()
 
+}
+
+func PublishInstantAction(client Publisher, action models.InstantAction) error {
+	message, err := json.Marshal(action)
+	if err != nil {
+		return err
+	}
+	token := client.Publish("instantAction", 0, false, message)
+	token.Wait()
+	return token.Error()
 }
