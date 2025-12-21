@@ -123,7 +123,20 @@ Copy ./config/.env.example into your root project and rename it to .env
 copy ./config/example.yaml to ./config/development.yaml
 Edit the two files with some sensible input
 
+# First, get the "lighter" dev environment up and running
+```
+docker compose  up -d
+```
+
+or get the more intensive version up and running (remember to set up the correct settings in .env):
+
+```
+docker compose  --profile full-masters-cluster up -d
 docker compose up -d
+```
+
+When elastic search is up and running, get everything else up and running:
+
 
 After this, run this project, either with "go run main.go" or hitting F5 in VSCode.
 
@@ -135,8 +148,9 @@ http://localhost:7080
 Login with your admin credentials, create a new realm named botnana either by using the file found here: "docs/realm-export.json" or setup everything under this realm just like it has been setup in the following image, that can be found here, in this repo:
 info/realm-settings.png
 
-Under the client, go to credentials, and use the client secret in the file "routes/rest/routes.go" and put in the var: "clientSecretDev".
-Client Secret Dev should already be set to botnana, but if you want to have another name for this, just set it there.
+Under the client, go to credentials, and use the client secret in the file "config/development.yaml" and put in the vars: "clientID" and
+"clientSecret".
+clientID should already be set to botnana, but if you want to have another name for this, just set it there.
 
 Also, make sure to create a new user and a password for this user, under the tab "users".
 
@@ -153,12 +167,8 @@ This should first redirect you to the backend located at https://localhost:8002,
 1. Go to https://localhost:5601 and login as the elastic user from .env
 2. Open the APM section of kibana
 3. create an APM integration with default values and https://localhost 
-4. Add a fleet server on you dev machine, use the following command to install:
-
-sudo ./elastic-agent install --fleet-server-es=https://localhost:9200 --fleet-server-service-token=[new-service-token-from-kibana-frontend] --fleet-server-policy=fleet-server-policy --fleet-server-es-ca=[path_to_this_directory]/assets/certs/es01/es01.crt --certificate-authorities=[path_to_this_directory]/assets/certs/ca/ca.crt --fleet-server-port=8220
-
-5. enroll the apm agent policy in the fleet server agent
-6. Go to the apm section and see all the backend and frontend data streamed diretly 
+4. enroll the apm agent policy in the fleet server agent
+5. Go to the apm section and see all the backend and frontend data streamed diretly 
 
 ## Business model
 

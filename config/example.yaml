@@ -1,4 +1,5 @@
-production: false
+clientID: "botnana"
+clientSecret: ""
 
 mysql:
   DB_CONNECTION: MYSQL

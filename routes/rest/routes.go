@@ -28,21 +28,11 @@ import (
 	"golang.org/x/oauth2"
 )
 
-var (
-	clientID        = ""
-	clientIDDev     = "botnana"
-	clientSecret    = ""
-	clientSecretDev = "mwhSsm6NOXNwA6qTklBu8ObmXlM4amyY"
-)
-
 // StartGin function
 func StartGin() {
 	conf := config.GetConfig()
-	production := conf.GetBool("production")
-	if !production {
-		clientID = clientIDDev
-		clientSecret = clientSecretDev
-	}
+	clientID := conf.GetString("clientID")
+	clientSecret := conf.GetString("clientSecret")
 
 	router := gin.Default()
 	router.Use(apmgin.Middleware(router))
