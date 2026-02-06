@@ -41,6 +41,18 @@ func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 	if unmarshallErr != nil {
 		log.Fatal(unmarshallErr.Error())
 	}
+	if manufacturer, serial, leaf, ok := parseTopic(topic); ok && leaf == topicState {
+		if amrFromMqtt.Manufacturer == "" {
+			amrFromMqtt.Manufacturer = manufacturer
+		} else if amrFromMqtt.Manufacturer != manufacturer {
+			log.Printf("State topic manufacturer mismatch: topic=%s payload=%s", manufacturer, amrFromMqtt.Manufacturer)
+		}
+		if amrFromMqtt.SerialNumber == "" {
+			amrFromMqtt.SerialNumber = serial
+		} else if amrFromMqtt.SerialNumber != serial {
+			log.Printf("State topic serial mismatch: topic=%s payload=%s", serial, amrFromMqtt.SerialNumber)
+		}
+	}
 
 	// Check if already in DB:
 	var amrInDB models.State
@@ -68,13 +80,18 @@ func OnStateReceived(_ mqtt.Client, message mqtt.Message) {
 	}
 }
 
-func AssignOrder(client Publisher, order models.Order) {
+func AssignOrder(client Publisher, order models.Order) error {
 	message, err := json.Marshal(order)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-	token := client.Publish("order", 0, false, message)
+	topic, topicErr := OrderTopic(order.Manufacturer, order.SerialNumber)
+	if topicErr != nil {
+		return topicErr
+	}
+	token := client.Publish(topic, 0, false, message)
 	token.Wait()
+	return token.Error()
 
 }
 
@@ -83,7 +100,11 @@ func PublishInstantAction(client Publisher, action models.InstantAction) error {
 	if err != nil {
 		return err
 	}
-	token := client.Publish("instantAction", 0, false, message)
+	topic, topicErr := InstantActionsTopic(action.Manufacturer, action.SerialNumber)
+	if topicErr != nil {
+		return topicErr
+	}
+	token := client.Publish(topic, 0, false, message)
 	token.Wait()
 	return token.Error()
 }

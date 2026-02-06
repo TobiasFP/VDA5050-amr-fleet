@@ -135,6 +135,8 @@ services:
       - xpack.ml.use_auto_machine_memory_percent=true
       - "ES_JAVA_OPTS=${ES_JAVA_OPTS}"
     mem_limit: ${ELK_MEM_LIMIT}
+    cap_add:
+      - IPC_LOCK
     ulimits:
       memlock:
         soft: -1
@@ -186,6 +188,8 @@ services:
       - xpack.ml.use_auto_machine_memory_percent=true
       - "ES_JAVA_OPTS=${ES_JAVA_OPTS}"
     mem_limit: ${ELK_MEM_LIMIT}
+    cap_add:
+      - IPC_LOCK
     ulimits:
       memlock:
         soft: -1
@@ -237,6 +241,8 @@ services:
       - xpack.ml.use_auto_machine_memory_percent=true
       - "ES_JAVA_OPTS=${ES_JAVA_OPTS}"
     mem_limit: ${ELK_MEM_LIMIT}
+    cap_add:
+      - IPC_LOCK
     ulimits:
       memlock:
         soft: -1
@@ -360,6 +366,7 @@ services:
         - /docker/containers:/var/lib/docker/containers:ro
       ports:
         - ${FLEET_PORT}:8220
+        - 8200:8200
       user: root
       environment:
         - FLEET_ENROLL=1
@@ -404,4 +411,3 @@ networks:
       config:
         - subnet: 10.34.12.0/24
           gateway: 10.34.12.1
-

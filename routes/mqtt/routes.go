@@ -11,11 +11,11 @@ import (
 )
 
 func StartSubscribing(client mqtt.Client) {
-	stateTopic := "state"
+	stateTopic := mqttstate.WildcardStateTopic()
 	if token := client.Subscribe(stateTopic, 0, mqttstate.OnStateReceived); token.Wait() && token.Error() != nil {
 		log.Panic("Error subscribing to topic:", token.Error())
 	}
-	connectionTopic := "connection"
+	connectionTopic := mqttstate.WildcardConnectionTopic()
 	if token := client.Subscribe(connectionTopic, 0, mqttstate.OnConnectionReceived); token.Wait() && token.Error() != nil {
 		log.Panic("Error subscribing to connection topic:", token.Error())
 	}

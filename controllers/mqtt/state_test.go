@@ -57,16 +57,22 @@ func (t *fakeToken) Error() error {
 
 func TestAssignOrderPublishesToOrderTopic(t *testing.T) {
 	publisher := &fakePublisher{}
-	order := models.Order{OrderID: "order-123"}
+	order := models.Order{
+		OrderID:      "order-123",
+		Manufacturer: "acme",
+		SerialNumber: "amr-1",
+	}
 
-	AssignOrder(publisher, order)
+	if err := AssignOrder(publisher, order); err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
 
 	if len(publisher.calls) != 1 {
 		t.Fatalf("expected 1 publish call, got %d", len(publisher.calls))
 	}
 	call := publisher.calls[0]
-	if call.topic != "order" {
-		t.Fatalf("expected topic order, got %s", call.topic)
+	if call.topic != "vda5050/acme/amr-1/order" {
+		t.Fatalf("expected topic vda5050/acme/amr-1/order, got %s", call.topic)
 	}
 	if call.payload == "" {
 		t.Fatalf("expected payload to be set")
@@ -76,8 +82,10 @@ func TestAssignOrderPublishesToOrderTopic(t *testing.T) {
 func TestPublishInstantActionPublishes(t *testing.T) {
 	publisher := &fakePublisher{}
 	action := models.InstantAction{
-		HeaderID: 1,
-		Actions:  []models.Action{{ActionID: "a1", ActionType: "beep"}},
+		HeaderID:     1,
+		Manufacturer: "acme",
+		SerialNumber: "amr-1",
+		Actions:      []models.Action{{ActionID: "a1", ActionType: "beep"}},
 	}
 
 	err := PublishInstantAction(publisher, action)
@@ -89,7 +97,7 @@ func TestPublishInstantActionPublishes(t *testing.T) {
 		t.Fatalf("expected 1 publish call, got %d", len(publisher.calls))
 	}
 
-	if publisher.calls[0].topic != "instantAction" {
-		t.Fatalf("expected topic instantAction, got %s", publisher.calls[0].topic)
+	if publisher.calls[0].topic != "vda5050/acme/amr-1/instantActions" {
+		t.Fatalf("expected topic vda5050/acme/amr-1/instantActions, got %s", publisher.calls[0].topic)
 	}
 }

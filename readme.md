@@ -65,7 +65,7 @@ BotNana reads configuration from two places:
   - Elastic stack version/ports
   - Kibana/Fleet settings
 - `config/development.yaml` (used by the Go app)
-  - `mqttBroker`, `apiPort`, `appUrl`, `keycloakUrl`, `OAuthUrl`
+  - `mqttBroker`, `mqttTopicPrefix`, `apiPort`, `appUrl`, `keycloakUrl`, `OAuthUrl`
   - `mysql.*` credentials
   - `logging.*` toggles
   - `addTestData` to seed a test map from `assets/maps/*` when the DB is empty
@@ -87,13 +87,21 @@ If you prefer a different environment name, run `go run main.go -e <name>` and c
 - `orders`: `/orders/all`, `POST /orders`, `POST /orders/assign`
 
 ## MQTT topics
+VDA5050 topics follow the pattern:
+`<prefix>/<manufacturer>/<serialNumber>/<topic>`
+
+The default prefix is `vda5050` and can be overridden with `mqttTopicPrefix` in `config/*.yaml`.
+
 Subscribed topics:
-- `state` (robot state updates)
-- `connection` (robot connection status)
+- `vda5050/+/+/state` (robot state updates)
+- `vda5050/+/+/connection` (robot connection status)
 
 Published topics:
-- `order` (assign a VDA5050 order)
-- `instantAction` (publish instant actions)
+- `vda5050/<manufacturer>/<serialNumber>/order` (assign a VDA5050 order)
+- `vda5050/<manufacturer>/<serialNumber>/instantActions` (publish instant actions)
+
+Note: outbound publish requires `manufacturer` and `serialNumber` in the payload so the topic can be built.
+See `docs/mqtt-topics.md` for details.
 
 ## Authentication (Keycloak)
 Keycloak is the default OAuth provider. You can use another provider if you prefer.

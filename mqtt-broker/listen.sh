@@ -8,4 +8,4 @@
 # Publish Data
 server="localhost"
  
-mosquitto_sub -h $server -t state
+mosquitto_sub -h $server -t "vda5050/+/+/state"

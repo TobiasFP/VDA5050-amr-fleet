@@ -90,6 +90,9 @@ func AssignAnonymous(ctx *gin.Context) {
 		ctx.JSON(400, gin.H{"error": orderCreateRes.Error.Error()})
 		return
 	}
-	mqttstate.AssignOrder(mqttstate.Client, order)
+	if mqttErr := mqttstate.AssignOrder(mqttstate.Client, order); mqttErr != nil {
+		ctx.JSON(400, gin.H{"error": mqttErr.Error()})
+		return
+	}
 	ctx.JSON(http.StatusOK, assignOrder)
 }

@@ -168,7 +168,7 @@ This should first redirect you to the backend located at https://localhost:8002,
 2. Open the APM section of kibana
 3. create an APM integration with default values and https://localhost 
 4. enroll the apm agent policy in the fleet server agent
-5. Go to the apm section and see all the backend and frontend data streamed diretly 
+5. Go to the apm section and see all the backend and frontend data streamed directly 
 
 ## Business model
 

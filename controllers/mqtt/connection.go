@@ -21,6 +21,18 @@ func OnConnectionReceived(_ mqtt.Client, message mqtt.Message) {
 		log.Printf("unable to parse connection payload: %v", unmarshallErr)
 		return
 	}
+	if manufacturer, serial, leaf, ok := parseTopic(topic); ok && leaf == topicConnection {
+		if connectionFromMqtt.Manufacturer == "" {
+			connectionFromMqtt.Manufacturer = manufacturer
+		} else if connectionFromMqtt.Manufacturer != manufacturer {
+			log.Printf("Connection topic manufacturer mismatch: topic=%s payload=%s", manufacturer, connectionFromMqtt.Manufacturer)
+		}
+		if connectionFromMqtt.SerialNumber == "" {
+			connectionFromMqtt.SerialNumber = serial
+		} else if connectionFromMqtt.SerialNumber != serial {
+			log.Printf("Connection topic serial mismatch: topic=%s payload=%s", serial, connectionFromMqtt.SerialNumber)
+		}
+	}
 
 	var connectionInDB models.Connection
 	connectionInDBResult := models.SqlDB.Where("serial_number = ?", connectionFromMqtt.SerialNumber).First(&connectionInDB)

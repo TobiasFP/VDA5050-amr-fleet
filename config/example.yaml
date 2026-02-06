@@ -18,6 +18,7 @@ apiUrl: http://localhost:8002
 apiPort: 8002
 OAuthUrl: "http://localhost:7080/realms/botnana/protocol/openid-connect"
 mqttBroker: tcp://localhost:1883
+mqttTopicPrefix: vda5050
 
 logging:
   logToLogStash: True
